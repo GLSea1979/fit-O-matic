@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "no-console": "off",
+    "indent": [ "error", 2 ],
+    "quotes": [ "error", "single" ],
+    "semi": ["error", "always"],
+    "linebreak-style": [ "error", "unix" ],
+    # "linebreak-style": [ "error", "windows"]
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "mocha": true,
+    "jasmine": true
+  },
+  "ecmaFeatures": {
+    "modules": true,
+    "experimentalObjectRestSpread": true,
+    "impliedStrict": true
+  },
+  "extends": "eslint:recommended"
+}
