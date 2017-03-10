@@ -1,0 +1,24 @@
+models:
+  1) user
+      - token
+      - id
+      - account info (email, etc)
+      - admin status
+  2) Profile
+        - gender
+        - measurements
+           - inseam/torso
+        -saved bikes/owned bikes
+        - group
+  3) bike geometry
+      - stack
+      - reach
+      - bike profile id (array)
+  4) bike profile
+      - manufacturer
+        -name, website
+      - local retailers
+      - style
+      - gender
+      - price
+      -photos
