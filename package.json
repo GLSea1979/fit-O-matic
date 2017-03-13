@@ -38,7 +38,8 @@
     "superagent": "^3.5.0"
   },
   "scripts": {
-    "test": ""
+    "test": "",
+    "start": "DEBUG='fit-O-matic*', node server.js"
   },
   "repository": {
     "type": "git",
