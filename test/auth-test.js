@@ -5,7 +5,7 @@ const request = require('superagent');
 const debug = require('debug')('fit-O-matic:auth-test');
 
 const User = require('../model/user.js');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const url = `http://localhost:${PORT}`;
 
 require('../server.js');
@@ -32,6 +32,57 @@ describe('Auth Routes', function(){
           if (err) return done(err);
           expect(res.status).to.equal(200);
           expect(res.text).to.be.a('string');
+          done();
+        });
+      });
+    });
+  });
+  describe('with an invalid body', function() {
+    it('should return a 400 for a bad request', (done) => {
+      request.post(`${url}/api/signup`)
+      .send('nothing here')
+      .set('Content-Type', 'application/json')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        done();
+      });
+    });
+  });
+
+  describe('GET: /api/signin', function() {
+    before( done => {
+      let user = new User(sampleUser);
+      user.generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => user => {
+        this.tempUser = user;
+        done();
+      })
+      .catch(done);
+    });
+
+    after( done => {
+      User.remove({})
+      .then( () => done())
+      .catch(done);
+    });
+
+    it('should return a token', done => {
+      request.get(`${url}/api/signin`)
+      .auth('sampleuser', '1234')
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.status).to.equal(200);
+        done();
+      });
+    });
+
+    describe('without a valid auth', () => {
+      it('should return a 401 error', done => {
+        request.get(`${url}/api/signin`)
+        .auth('sampleuser', 'wrong password')
+        .end((err) => {
+          expect(err.status).to.equal(401);
           done();
         });
       });
