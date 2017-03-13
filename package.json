@@ -38,7 +38,7 @@
     "superagent": "^3.5.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": ""
   },
   "repository": {
     "type": "git",
