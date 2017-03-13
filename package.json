@@ -38,7 +38,7 @@
     "superagent": "^3.5.0"
   },
   "scripts": {
-    "test": "",
+    "test": "DEBUG='fit-O-matic*', mocha",
     "start": "DEBUG='fit-O-matic*', node server.js"
   },
   "repository": {
