@@ -13,7 +13,7 @@ require('../server.js');
 const sampleUser = {
   username: 'test username',
   email: 'test email',
-  password: 'test password',
+  password: 'testpassword',
   admin: true
 };
 
@@ -52,9 +52,15 @@ describe('Auth Routes', function(){
   describe('GET: /api/signin', function() {
     before( done => {
       let user = new User(sampleUser);
+      debug('sample user password:', sampleUser.password);
       user.generatePasswordHash(sampleUser.password)
-      .then( user => user.save())
-      .then( user => user => {
+      .then( user => {
+        debug('inside someting:', user);
+        return user.save()
+
+      })
+      .then( user => {
+        debug('somewhere else', user);
         this.tempUser = user;
         done();
       })
@@ -69,7 +75,7 @@ describe('Auth Routes', function(){
 
     it('should return a token', done => {
       request.get(`${url}/api/signin`)
-      .auth('sampleuser', '1234')
+      .auth('test username', 'testpassword')
       .end((err, res) => {
         if (err) return done(err);
         expect(res.status).to.equal(200);
@@ -80,7 +86,7 @@ describe('Auth Routes', function(){
     describe('without a valid auth', () => {
       it('should return a 401 error', done => {
         request.get(`${url}/api/signin`)
-        .auth('sampleuser', 'wrong password')
+        .auth('test username', 'wrong password')
         .end((err) => {
           expect(err.status).to.equal(401);
           done();
