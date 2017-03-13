@@ -22,3 +22,39 @@ models:
       - gender
       - price
       -photos
+
+
+routes:
+  front page:
+    1) sign up
+      -post new user info and make password
+    2) sign in
+      -get user info and load profile data
+      -put change password, user name
+      -delete user name and password
+    3) use site as guest
+      -post measurements
+      -get bike matches
+
+  signed in page:
+    1) see personal info/bikes already selected
+      -get profile info
+      -put update profile info
+      -post new profile info
+      -delete profile info
+      -post new measurements
+      -put update old measurements
+      -delete measurements
+      -put update selected bikes
+      -get bikes based on measurements
+
+  bike seller page:
+    1) see company page
+      -get bikes already listed and their sizes
+      -post new bikes and sizes
+      -put new data/pics for bikes for sale
+      -delete bikes for sale
+      -get store/seller info
+      -post more company/seller/store info
+      -put update seller info
+      -delete store/seller info
