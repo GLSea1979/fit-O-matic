@@ -14,6 +14,7 @@ const errors = require('./lib/error-middleware.js');
 const authRouter = require('./routes/auth-route.js');
 const bikeGeoRouter = require('./routes/geo-route.js');
 const basic = require('./routes/basic-route.js');
+const profileRouter = require('./routes/profile-route.js');
 
 const PORT = process.env.PORT || 8000;
 
@@ -23,6 +24,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(basic);
 app.use(authRouter);
+app.use(profileRouter);
 app.use(bikeGeoRouter);
 app.use(errors);
 app.listen(PORT, () => debug('server up:', PORT));

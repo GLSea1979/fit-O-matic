@@ -15,4 +15,4 @@ const BikeSchema = Schema({
   created: {type: Date, default: Date.now}
 });
 
-module.exports = mongoose.model('Bike', BikeSchema);
+module.exports = mongoose.model('bike', BikeSchema);
