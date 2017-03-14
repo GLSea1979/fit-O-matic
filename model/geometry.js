@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const bikeGeoSchema =  Schema({
+const GeoSchema =  Schema({
   bikeProfileID: {type: Schema.Types.ObjectId, required: true},
   bikeSizeName: {type: String, required: true},
   wheelSize: {type: Number},
@@ -18,5 +18,4 @@ const bikeGeoSchema =  Schema({
   reach: {type: Number},
 });
 
-module.exports = mongoose.model('bikeGeometry', bikeGeoSchema);
-
+module.exports = mongoose.model('Geometry', GeoSchema);

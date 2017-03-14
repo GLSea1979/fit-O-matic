@@ -5,8 +5,8 @@ const expect = require('chai').expect;
 const Promise = require('bluebird');
 
 const User = require('../model/user.js');
-const BikeGeo = require('../model/bike-geometry.js');
-const BikeProfile = require('../model/bike-profile.js');
+const BikeGeo = require('../model/geometry.js');
+const BikeProfile = require('../model/bike.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
@@ -52,7 +52,7 @@ describe('Bike Geometry Routes', function() {
     })
     .catch(done);
   });
-  describe('POST api/bike/:bikeID/bikeGeometry', () => {
+  describe('POST api/bike/:bikeID/geometry', () => {
     before( done => {
       new BikeProfile(sampleBikeProfile).save()
       .then(bike => {
@@ -72,7 +72,7 @@ describe('Bike Geometry Routes', function() {
     });
     describe('with a valid bike ID', () => {
       it('should return 200 with a new bike geometry', done => {
-        request.post(`${url}/api/bike/${this.tempBike._id}/bikeGeometry`)
+        request.post(`${url}/api/bike/${this.tempBike._id}/geometry`)
         .send(this.tempBikeGeo)
         .set({
           Authorization: `Bearer ${this.tempToken}`

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const userProfileSchema = Schema({
+const profileSchema = Schema({
   name: {type: String, required: true},
   gender: {type: String, required: false},
   photo: {type: String, required: false},
@@ -15,7 +15,7 @@ const userProfileSchema = Schema({
   createdOn: {type: Date, default: Date.now},
   // fitModelID: {type: Schema.Types.ObjectId, default: true},
   //TODO - UPDATE VALUE BELOW WITH PROPER SCHEMA NAME
-  bikeGeo: [{ type: Schema.Types.ObjectId, ref: 'bikeGeo' }]
+  bikeGeo: [{ type: Schema.Types.ObjectId, ref: 'geo' }]
 });
 
-module.exports = mongoose.model('userProfile', userProfileSchema);
+module.exports = mongoose.model('profile', profileSchema);

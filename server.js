@@ -12,7 +12,7 @@ dotenv.load();
 
 const errors = require('./lib/error-middleware.js');
 const authRouter = require('./routes/auth-route.js');
-const bikeGeoRouter = require('./routes/bike-geo-route.js');
+const bikeGeoRouter = require('./routes/geo-route.js');
 const basic = require('./routes/basic-route.js');
 
 const PORT = process.env.PORT || 8000;
