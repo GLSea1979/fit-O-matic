@@ -19,7 +19,10 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 
   user.generatePasswordHash(password)
   .then( user => user.save())
-  .then( user => user.generateToken())
+  .then( user => {
+    debug('user', user);
+    return user.generateToken();
+  })
   .then( token => res.send(token))
   .catch(next);
 });

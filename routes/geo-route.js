@@ -16,8 +16,7 @@ bikeGeometryRouter.post('/api/bike/:bikeID/geometry', bearerAuth, jsonParser, (r
   Bike.findById(req.params.bikeID)
   .then( bike => {
     if(!bike) return next(createError(404, 'bike not found'));
-    req.body.bikeProfileID = bike._id;
-    console.log(bike);
+    req.body.bikeID = bike._id;
     BikeGeo(req.body).save();
   })
   .then( bike => {

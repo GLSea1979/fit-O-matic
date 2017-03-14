@@ -5,21 +5,26 @@ const expect = require('chai').expect;
 const Promise = require('bluebird');
 
 const User = require('../model/user.js');
+const Mfr = require('../model/mfr.js');
 const BikeGeo = require('../model/geometry.js');
 const BikeProfile = require('../model/bike.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
 require('../server.js');
-
+const sampleMfr = {
+  name: 'sample mfr',
+  website: 'sample.com'
+};
 const sampleBikeProfile = {
   bikeName: 'test name',
-  manufacturer: 'test manufacturer',
-  category: 'test category'
+  category: 'test category',
+  photoURI: 'emmereffer.jpg'
 };
 const sampleBikeGeo = {
   bikeSizeName: 'test size',
   topTubeLength: 50,
+  bikeID: []
 };
 const sampleUser = {
   username: 'test username',
@@ -34,11 +39,18 @@ describe('Bike Geometry Routes', function() {
       BikeGeo.remove({}),
       BikeProfile.remove({}),
       User.remove({}),
+      Mfr.remove({})
     ])
     .then( () => done())
     .catch(done);
   });
   before( done => {
+    new Mfr(sampleMfr).save()
+    .then( mfr => {
+      this.tempMfr = mfr;
+    })
+    .catch(done);
+
     let user = new User(sampleUser);
     user.generatePasswordHash(sampleUser.password)
     .then( user => user.save())
@@ -54,6 +66,7 @@ describe('Bike Geometry Routes', function() {
   });
   describe('POST api/bike/:bikeID/geometry', () => {
     before( done => {
+      sampleBikeProfile.mfrID = this.tempMfr._id;
       new BikeProfile(sampleBikeProfile).save()
       .then(bike => {
         this.tempBike = bike;
@@ -62,7 +75,7 @@ describe('Bike Geometry Routes', function() {
       .catch(done);
     });
     before( done => {
-      sampleBikeGeo.bikeProfileID = this.tempBike._id;
+      sampleBikeGeo.bikeID.push(this.tempBike._id);
       new BikeGeo(sampleBikeGeo).save()
       .then( bikeGeo => {
         this.tempBikeGeo = bikeGeo;
