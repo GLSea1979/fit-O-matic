@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const GeoSchema =  Schema({
-  bikeProfileID: {type: Schema.Types.ObjectId, required: true},
+  bikeID: [{type: Schema.Types.ObjectId, required: true}],
   bikeSizeName: {type: String, required: true},
   wheelSize: {type: Number},
   bbDrop: {type: Number},
@@ -18,4 +18,4 @@ const GeoSchema =  Schema({
   reach: {type: Number},
 });
 
-module.exports = mongoose.model('Geometry', GeoSchema);
+module.exports = mongoose.model('geometry', GeoSchema);

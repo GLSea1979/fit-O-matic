@@ -13,9 +13,7 @@ const profileSchema = Schema({
   height: {type: Number},
   userID: {type: Schema.Types.ObjectId, required: true},
   createdOn: {type: Date, default: Date.now},
-  // fitModelID: {type: Schema.Types.ObjectId, default: true},
-  //TODO - UPDATE VALUE BELOW WITH PROPER SCHEMA NAME
-  bikeGeo: [{ type: Schema.Types.ObjectId, ref: 'geo' }]
+  geoID: [{ type: Schema.Types.ObjectId, ref: 'geometry' }]
 });
 
 module.exports = mongoose.model('profile', profileSchema);
