@@ -4,12 +4,12 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const bikeProfileSchema ={
+const bikeProfileSchema = Schema({
   bikeName: { type: String, required: true },
   manufacturer: { type: String, required: true},
   category: { type: String, required: true},
-  manufacturer-website: {type: String },
+  manufacturerWebsite: {type: String },
   price: { type: Number}
-}
+});
 
 module.exports = mongoose.model('bikeProfile', bikeProfileSchema);
