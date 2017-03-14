@@ -31,12 +31,13 @@ bikeGeometryRouter.get('/api/geo/:height/:inseam', bearerAuth, function(req, res
   if(!req.params.height) return next(createError(400, 'height required'));
   if(!req.params.inseam) return next(createError(400, 'inseam required'));
 
-  let topTube = bikeAlgorithm.basicfit(req.params.height, req.params.inseam);
-  debug('THE TOP TUBE----->', topTube);
-  BikeGeo.find({topTubeLength: topTube})
+  let obj = {topTube: bikeAlgorithm.basicfit(req.params.height, req.params.inseam)};
+  debug('THE TOP TUBE----->', obj.topTube);
+  BikeGeo.find({topTubeLength: obj.topTube})
   .then( geo => {
+    obj.geo = geo;
     debug('HERE IS THE GEO ------> ', geo);
-    res.json();
+    res.json(obj);
   })
   .catch(next);
 });
