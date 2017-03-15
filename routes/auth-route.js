@@ -34,7 +34,7 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 
 
 //  want to test for wrong username but am getting pushed to error middleware not sure what to do next
-//  think I need to handle it in the catch block and put next at the end... maybe...
+//  think I need to handle it in the catch block and put next at the end... maybe...????
 authRouter.get('/api/signin', basicAuth, function(req, res, next){
   debug('GET: /api/signin');
   debug('user--------------------', req.auth.username);
