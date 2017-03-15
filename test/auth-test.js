@@ -36,38 +36,102 @@ describe('Auth Routes', function(){
         });
       });
     });
-  });
-  describe('with an invalid body', function() {
-    it('should return a 400 for a bad request', (done) => {
-      request.post(`${url}/api/signup`)
-      .send('nothing here')
-      .set('Content-Type', 'application/json')
-      .end((err, res) => {
-        expect(res.status).to.equal(400);
-        done();
+    describe('with an invalid body', function() {
+      it('should return a 400 for a bad request', done => {
+        request.post(`${url}/api/signup`)
+        .send('nothing here')
+        .set('Content-Type', 'application/json')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('missing required signin information', function() {
+      describe('missing a username', function() {
+        afterEach( done => {
+          User.remove({})
+          .then( () => done())
+          .catch(done);
+        });
+
+        it('should return a 400 error', done => {
+          let brokenUser = {
+            email: 'test email',
+            password: 'testpassword',
+            admin: true
+          }
+          request.post(`${url}/api/signup`)
+          .send(brokenUser)
+          .set('Content-Type', 'application/json')
+          .end((err, res) => {
+            expect(res.status).to.equal(400);
+            done();
+          });
+        });
+
+        it('should return a 400 error', done => {
+          let brokenUser = {
+            username: 'test username',
+            password: 'testpassword',
+            admin: true
+          }
+          request.post(`${url}/api/signup`)
+          .send(brokenUser)
+          .set('Content-Type', 'application/json')
+          .end((err, res) => {
+            expect(res.status).to.equal(400);
+            done();
+          });
+        });
+
+        it('should return a 400 error', done => {
+          let brokenUser = {
+            username: 'test username',
+            email: 'test email',
+            admin: true
+          }
+          request.post(`${url}/api/signup`)
+          .send(brokenUser)
+          .set('Content-Type', 'application/json')
+          .end((err, res) => {
+            expect(res.status).to.equal(400);
+            done();
+          });
+        });
+
+        it('should return a 400 error', done => {
+          let brokenUser = {
+            username: 'test username',
+            email: 'test email',
+            password: 'testpassword'
+          }
+          request.post(`${url}/api/signup`)
+          .send(brokenUser)
+          .set('Content-Type', 'application/json')
+          .end((err, res) => {
+            expect(res.status).to.equal(400);
+            done();
+          });
+        });
       });
     });
   });
-
   describe('GET: /api/signin', function() {
-    before( done => {
+    beforeEach( done => {
       let user = new User(sampleUser);
-      debug('sample user password:', sampleUser.password);
       user.generatePasswordHash(sampleUser.password)
       .then( user => {
-        debug('inside someting:', user);
         return user.save()
-
       })
       .then( user => {
-        debug('somewhere else', user);
         this.tempUser = user;
         done();
       })
       .catch(done);
     });
 
-    after( done => {
+    afterEach( done => {
       User.remove({})
       .then( () => done())
       .catch(done);
@@ -91,6 +155,53 @@ describe('Auth Routes', function(){
           expect(err.status).to.equal(401);
           done();
         });
+      });
+    });
+
+    // describe('without a valid username', () => {
+    //   it('should return a 400 error', done => {
+    //     request.get(`${url}/api/signin`)
+    //     .auth('wrong username', 'testpassword')
+    //     .end((err, res) => {
+    //       expect(err.status).to.equal(400);
+    //       done();
+    //     });
+    //   });
+    // });
+  });
+
+  describe('PUT: /api/newPassword', function() {
+    beforeEach( done => {
+      let user = new User(sampleUser);
+      user.generatePasswordHash(sampleUser.password)
+      .then( user => {
+        return user.save()
+
+      })
+      .then( user => {
+        this.tempUser = user;
+        done();
+      })
+      .catch(done);
+    });
+
+    afterEach( done => {
+      User.remove({})
+      .then( () => done())
+      .catch(done);
+    });
+
+    it('should update a username with a valid username and body', done => {
+      let updateUser = {name: 'some new name'};
+      request.put(`${url}/api/newPassword/`)
+      .send(updateUser)
+      .auth('test username', 'testpassword')
+      .set('Content-Type', 'application/json')
+      .end((err, res) => {
+        if(err) return done(err);
+        expect(res.status).to.equal(200);
+        // expect(res.body.name).to.equal('some new name');
+        done();
       });
     });
   });

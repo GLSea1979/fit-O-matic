@@ -23,6 +23,11 @@ const sampleBikeProfile = {
   category: 'test category',
   photoURI: 'emmereffer.jpg'
 };
+const sampleBikeProfile2 = {
+  bikeName: 'test name2',
+  category: 'test category2',
+  photoURI: 'emmereffer2.jpg'
+};
 const sampleBikeGeo = {
   bikeSizeName: 'test size',
   topTubeLength: 52,
@@ -82,30 +87,49 @@ describe('Bike Geometry Routes', function() {
       })
       .catch(done);
     });
-    before( done => {
-      sampleBikeGeo.bikeID.push(this.tempBike._id);
-      new BikeGeo(sampleBikeGeo).save()
-      .then( bikeGeo => {
-        this.tempBikeGeo = bikeGeo;
-        done();
-      })
-      .catch(done);
-    });
     describe('with a valid bike ID', () => {
       it('should return 200 with a new bike geometry', done => {
         request.post(`${url}/api/bike/${this.tempBike._id}/geometry`)
-        .send(this.tempBikeGeo)
+        .send(sampleBikeGeo)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
         .end((err, res) => {
           if (err) return done(err);
+          debug('res.body:',res.body);
           expect(res.status).to.equal(200);
           done();
         });
       });
     });
-  });
+    describe('with an malformed bike ID', () => {
+      it('should return a 400', done => {
+        request.post(`${url}/api/bike/badbikeID/geometry`)
+        .send(this.tempBikeGeo)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(err.message).to.equal('Bad Request');
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('with an invalid bike ID', () => {
+      it('should return a 404', done => {
+        request.post(`${url}/api/bike/${this.tempBike._id.toString().slice(0, -3)}ccc/geometry`)
+        .send(this.tempBikeGeo)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(err.message).to.equal('Not Found');
+          expect(res.status).to.equal(404);
+          done();
+        });
+      });
+    });  });
 
   describe('GET: /api/geo/:id', function() {
 
@@ -132,6 +156,91 @@ describe('Bike Geometry Routes', function() {
 
     before( done => {
       sampleBikeProfile.mfrID = this.tempMfr._id;
+      sampleBikeProfile2.mfrID = this.tempMfr._id;
+      new BikeProfile(sampleBikeProfile).save()
+      .then(bike => {
+        this.tempBike = bike;
+        new BikeProfile(sampleBikeProfile2).save()
+        .then( bike => {
+          this.tempBike2 = bike;
+          done();
+        });
+      })
+      .catch(done);
+    });
+
+    before( done => {
+      sampleBikeGeo.bikeID.push(this.tempBike._id);
+      sampleBikeGeo.bikeID.push(this.tempBike2._id);
+      new BikeGeo(sampleBikeGeo).save()
+      .then( bikeGeo => {
+        this.tempBikeGeo = bikeGeo;
+        done();
+      })
+      .catch(done);
+    });
+
+    it('should return a bike geometry object', done => {
+      request.get(`${url}/api/geo/?height=${sampleMeasure.height}&inseam=${sampleMeasure.inseam}`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.status).to.equal(200);
+        expect(res.body.geo[0].bikeID[1].bikeName).to.equal(this.tempBike2.bikeName);
+        expect(res.body.topTube).to.equal(sampleMeasure.result);
+        done();
+      });
+    });
+    it('should return a 400 with missing height', done => {
+      request.get(`${url}/api/geo/?height=&inseam=${sampleMeasure.inseam}`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        expect(err.message).to.equal('Bad Request');
+        expect(res.status).to.equal(400);
+        done();
+      });
+    });
+    it('should return a 400 with missing inseam', done => {
+      request.get(`${url}/api/geo/?height=${sampleMeasure.height}&inseam=`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        expect(err.message).to.equal('Bad Request');
+        expect(res.status).to.equal(400);
+        done();
+      });
+    });
+  });
+  describe('PUT /api/geo/geoID', function() {
+    before( done => {
+      new Mfr(sampleMfr).save()
+      .then( mfr => {
+        this.tempMfr = mfr;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      sampleBikeProfile.mfrID = this.tempMfr._id;
       new BikeProfile(sampleBikeProfile).save()
       .then(bike => {
         this.tempBike = bike;
@@ -149,24 +258,48 @@ describe('Bike Geometry Routes', function() {
       })
       .catch(done);
     });
-
-    // before( done => {
-    //
-    // });
-    it('should return a bike geometry object', done => {
-      request.get(`${url}/api/geo/${sampleMeasure.height}/${sampleMeasure.inseam}`)
-      .set({
-        Authorization: `Bearer ${this.tempToken}`
-      })
-      .end((err, res) => {
-        // if (err) return done(err);
-        debug('HERE ARE OUR RESSUULLTSL:', sampleMeasure.result);
-        debug('BODYYYYYYY',res.body);
-        expect(res.status).to.equal(200);
-        //expect(res.topTube).to.equal(sampleMeasure.result);
-        done();
+    describe('with a valid ID and Body', () => {
+      it('should return a 200 with updated content', done => {
+        request.put(`${url}/api/geo/${this.tempBikeGeo._id}`)
+        .send({bikeSizeName: 'updated name'})
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body.bikeSizeName).to.equal('updated name');
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+    describe('with an invalid ID', () => {
+      it('should return a 404', done => {
+        request.put(`${url}/api/geo/58c8b114cc85c0838a2a0765`)
+        .send({bikeSizeName: 'updated name'})
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(err.message).to.equal('Not Found');
+          expect(res.status).to.equal(404);
+          done();
+        });
+      });
+    });
+    describe('with a malformed ID', () => {
+      it('should return a 400', done => {
+        request.put(`${url}/api/geo/badId`)
+        .send({bikeSizeName: 'updated name'})
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(err.message).to.equal('Bad Request');
+          expect(res.status).to.equal(400);
+          done();
+        });
       });
     });
   });
-
 });

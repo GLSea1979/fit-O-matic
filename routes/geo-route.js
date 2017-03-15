@@ -18,26 +18,40 @@ bikeGeometryRouter.post('/api/bike/:bikeID/geometry', bearerAuth, jsonParser, (r
   .then( bike => {
     if(!bike) return next(createError(404, 'bike not found'));
     req.body.bikeID = bike._id;
-    BikeGeo(req.body).save();
-  })
-  .then( bike => {
-    res.json(bike);
+    return BikeGeo(req.body).save()
+    .then( geo => {
+      res.json(geo);
+    });
   })
   .catch(next);
 });
 
-bikeGeometryRouter.get('/api/geo/:height/:inseam', bearerAuth, function(req, res, next){
-  debug('GET: /api/geo/:height/:inseam');
-  if(!req.params.height) return next(createError(400, 'height required'));
-  if(!req.params.inseam) return next(createError(400, 'inseam required'));
+bikeGeometryRouter.get('/api/geo/', bearerAuth, function(req, res, next){
+  debug('GET: /api/geo/?height=&inseam=');
 
-  let obj = {topTube: bikeAlgorithm.basicfit(req.params.height, req.params.inseam)};
-  debug('THE TOP TUBE----->', obj.topTube);
+  if(!req.query.height) return next(createError(400, 'height required'));
+  if(!req.query.inseam) return next(createError(400, 'inseam required'));
+
+  let obj = {topTube: bikeAlgorithm.basicfit(req.query.height, req.query.inseam)};
   BikeGeo.find({topTubeLength: obj.topTube})
+  .populate('bikeID')
   .then( geo => {
     obj.geo = geo;
-    debug('HERE IS THE GEO ------> ', geo);
     res.json(obj);
   })
   .catch(next);
 });
+bikeGeometryRouter.put('/api/geo/:geoID', bearerAuth, jsonParser, function(req, res, next){
+  debug('PUT: /api/geo/:geoID');
+
+  if(!req.params.geoID) return next(createError(400, 'Geometry ID Required'));
+
+  BikeGeo.findByIdAndUpdate(req.params.geoID, req.body, {new:true})
+  .then( geo => {
+    if(!geo) return next(createError(404, 'Geometry Not Found'));
+    res.json(geo);
+  })
+  .catch(next);
+});
+
+
