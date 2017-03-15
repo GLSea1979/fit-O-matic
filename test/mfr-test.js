@@ -27,7 +27,7 @@ const sampleUser = {
   admin: true
 };
 
-describe.only('Mfr Routes', function(){
+describe('Mfr Routes', function(){
   afterEach( done => {
     Promise.all([
       Mfr.remove({}),
