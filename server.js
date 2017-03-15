@@ -16,6 +16,8 @@ const bikeGeoRouter = require('./routes/geo-route.js');
 const basic = require('./routes/basic-route.js');
 const profileRouter = require('./routes/profile-route.js');
 const mfrRouter = require('./routes/mfr-route.js');
+const bikeRouter = require('./routes/bike-route.js');
+
 
 const PORT = process.env.PORT || 8000;
 
@@ -28,5 +30,6 @@ app.use(authRouter);
 app.use(profileRouter);
 app.use(bikeGeoRouter);
 app.use(mfrRouter);
+app.use(bikeRouter);
 app.use(errors);
 app.listen(PORT, () => debug('server up:', PORT));
