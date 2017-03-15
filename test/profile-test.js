@@ -32,6 +32,12 @@ const sampleUpdatedProfile = {
   photo: 'doje.png'
 };
 
+const sampleBrandNewProfile = {
+  name: 'Fresh New Profile Name',
+  gender: 'yes',
+  photo: 'katze.png'
+};
+
 describe.only('Profile Routes', function(){
   afterEach( done => {
     Promise.all([
@@ -204,4 +210,36 @@ describe.only('Profile Routes', function(){
     });
   });
 
-});
+  describe('POST: /api/profile', function(){
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });//end before
+    describe('with a valid request body', () => {
+      it('should return a new profile object', done => {
+        request.post(`${url}/api/profile/${this.tempUser._id}`)
+        .send(sampleBrandNewProfile)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body.userID).to.equal(this.tempUser._id.toString());
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+  });//end POST
+
+});//end profile route tests
