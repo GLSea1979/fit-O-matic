@@ -14,7 +14,6 @@ const userSchema = Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  // TODO do we need to add a default property below to admin???
   admin: { type: Boolean, required: true},
   findHash: { type: String, unique: true }
 });
@@ -61,7 +60,7 @@ userSchema.methods.generateFindHash = function() {
         tries++;
         _generateFindHash.call(this);
       });
-    };
+    }
   });
 };
 
