@@ -20,7 +20,6 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 
   let password = req.body.password;
   delete req.body.password;
-
   let user = new User(req.body);
 
   user.generatePasswordHash(password)
