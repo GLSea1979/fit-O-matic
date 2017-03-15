@@ -38,7 +38,7 @@ const sampleBrandNewProfile = {
   photo: 'katze.png'
 };
 
-describe.only('Profile Routes', function(){
+describe('Profile Routes', function(){
   afterEach( done => {
     Promise.all([
       User.remove({}),
@@ -151,7 +151,7 @@ describe.only('Profile Routes', function(){
       })
       .catch(done);
     });
-    
+
     describe('with a valid request body', () => {
       it('should return an updated profile object', done => {
         request.put(`${url}/api/profile/${this.tempProfile._id}`)
