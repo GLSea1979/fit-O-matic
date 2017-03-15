@@ -36,7 +36,6 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 //  think I need to handle it in the catch block and put next at the end... maybe...????
 authRouter.get('/api/signin', basicAuth, function(req, res, next){
   debug('GET: /api/signin');
-  debug('user--------------------', req.auth.username);
   User.findOne({username: req.auth.username})
   .then( user => {
     if (!user) {
@@ -63,7 +62,6 @@ authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, nex
   debug('PUT: /api/newUserName');
   let password = req.auth.password;
   delete req.auth.password;
-  debug('the body', req.body);
   User.findOne({username: req.auth.username})
   .then( user => user.comparePasswordHash(password))
   .then( user => User.findByIdAndUpdate(user._id, req.body, {new: true} ))
@@ -71,7 +69,6 @@ authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, nex
     if(!user){
       return next(createError(404, 'user not found'))
     }
-    debug('inside put', user);
     res.json(user);
   })
   .catch(next);

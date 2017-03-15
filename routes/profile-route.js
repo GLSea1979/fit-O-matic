@@ -17,7 +17,6 @@ profileRouter.post('/api/profile/:userid', bearerAuth, jsonParser,     function(
   req.body.userID = req.params.userid;
   new Profile(req.body).save()
   .then( profile => {
-    debug('yo hey this is the new profile:', profile);
     return res.json(profile);
   })
   .catch(err => {
