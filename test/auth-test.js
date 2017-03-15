@@ -158,16 +158,16 @@ describe('Auth Routes', function(){
       });
     });
 
-    // describe('without a valid username', () => {
-    //   it('should return a 400 error', done => {
-    //     request.get(`${url}/api/signin`)
-    //     .auth('wrong username', 'testpassword')
-    //     .end((err, res) => {
-    //       expect(err.status).to.equal(400);
-    //       done();
-    //     });
-    //   });
-    // });
+    describe('without a valid username', () => {
+      it('should return a 400 error', done => {
+        request.get(`${url}/api/signin`)
+        .auth('wrong username', 'testpassword')
+        .end((err, res) => {
+          expect(err.status).to.equal(400);
+          done();
+        });
+      });
+    });
   });
 
   describe('PUT: /api/newPassword', function() {
@@ -192,15 +192,15 @@ describe('Auth Routes', function(){
     });
 
     it('should update a username with a valid username and body', done => {
-      let updateUser = {name: 'some new name'};
-      request.put(`${url}/api/newPassword/`)
+      let updateUser = { username: 'some new name'};
+      request.put(`${url}/api/newUserName/`)
       .send(updateUser)
       .auth('test username', 'testpassword')
       .set('Content-Type', 'application/json')
       .end((err, res) => {
         if(err) return done(err);
         expect(res.status).to.equal(200);
-        // expect(res.body.name).to.equal('some new name');
+        expect(res.body.username).to.equal('some new name');
         done();
       });
     });
