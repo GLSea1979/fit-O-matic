@@ -5,6 +5,10 @@ models:
       - account info (email, etc)
       - admin status
   2) Profile
+        -name
+        -photo
+        -created on
+        -group
         - gender
         - measurements
            - inseam/torso
