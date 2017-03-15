@@ -81,9 +81,9 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# local
 .env
-
+.coveralls.yml
 
 ### Vim ###
 # swap

@@ -1,0 +1,18 @@
+'use strict';
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const BikeSchema = Schema({
+  bikeName: { type: String, required: true },
+  mfrID: { type: Schema.Types.ObjectId, required: true},
+  category: { type: String, required: true},
+  photoURI: { type: String, required: true},
+  url: { type: String },
+  price: { type: Number},
+  modelYear: { type: String},
+  created: {type: Date, default: Date.now}
+});
+
+module.exports = mongoose.model('bike', BikeSchema);
