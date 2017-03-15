@@ -44,12 +44,7 @@ profileRouter.put('/api/profile/:id', bearerAuth, jsonParser, function(req, res,
   .then( profile => {
     res.json(profile);
   })
-  // .catch(next);
-  .catch(err => {
-    debug('here is our error:', err);
-    next();
-  });
-
+  .catch(next);
 });
 
 profileRouter.delete('/api/profile/:id', bearerAuth, function(req, res, next){

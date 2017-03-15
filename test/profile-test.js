@@ -151,6 +151,7 @@ describe.only('Profile Routes', function(){
       })
       .catch(done);
     });
+    
     describe('with a valid request body', () => {
       it('should return an updated profile object', done => {
         request.put(`${url}/api/profile/${this.tempProfile._id}`)
@@ -164,6 +165,19 @@ describe.only('Profile Routes', function(){
           expect(res.body.name).to.equal(sampleUpdatedProfile.name);
           expect(res.body.gender).to.equal(sampleUpdatedProfile.gender);
           expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+
+    describe('with an no body resulting in 400', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/profile/bad`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
           done();
         });
       });
