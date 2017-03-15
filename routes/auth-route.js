@@ -1,6 +1,7 @@
 'use strict';
 
 const Router = require('express').Router;
+const createError = require('http-errors');
 const jsonParser = require('body-parser').json();
 const debug = require('debug')('fit-O-matic:auth-route');
 
@@ -11,7 +12,12 @@ const basicAuth = require('../lib/basic-auth-middleware.js');
 const authRouter = module.exports = Router();
 
 authRouter.post('/api/signup', jsonParser, function(req, res, next){
-  debug('POST /api/signup');
+  debug('POST /api/signup---------------------------', req.body, '-----------------------');
+  if (!req.body.username) return next(createError(400, 'need username'));
+  if (!req.body.admin) return next(createError(400, 'need admin'));
+  if (!req.body.email) return next(createError(400, 'need an email'));
+  if (!req.body.password) return next(createError(400, 'need a password'));
+
   let password = req.body.password;
   delete req.body.password;
 
