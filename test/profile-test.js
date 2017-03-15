@@ -161,7 +161,6 @@ describe('Profile Routes', function(){
         })
         .end((err, res) => {
           if (err) return done(err);
-          debug('res.body ------->', res.body);
           expect(res.body.name).to.equal(sampleUpdatedProfile.name);
           expect(res.body.gender).to.equal(sampleUpdatedProfile.gender);
           expect(res.status).to.equal(200);
