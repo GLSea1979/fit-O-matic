@@ -20,7 +20,6 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 
   let password = req.body.password;
   delete req.body.password;
-
   let user = new User(req.body);
 
   user.generatePasswordHash(password)
@@ -39,26 +38,41 @@ authRouter.get('/api/signin', basicAuth, function(req, res, next){
   debug('GET: /api/signin');
   debug('user--------------------', req.auth.username);
   User.findOne({username: req.auth.username})
-  .then( user => user.comparePasswordHash(req.auth.password))
-  .then( user => user.generateToken())
-  .then( token => res.send(token))
+  .then( user => {
+    if (!user) {
+      return next(createError(400, 'user not found'));
+    }
+    return user.comparePasswordHash(req.auth.password)
+  })
+  .then( user => {
+    if (!user) {
+      return next(createError(400, 'user not found'));
+    }
+    return user.generateToken()
+  })
+  .then( token => {
+    if (!token) {
+      return next(createError(400, 'token not found'));
+    }
+    return res.send(token)
+  })
   .catch(next);
 });
 
-authRouter.put('/api/newPassword', basicAuth, jsonParser, function(req, res, next){
-  debug('PUT: /api/newPassword');
-  req.body.password;
-  delete req.body.password;
-
+authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, next){
+  debug('PUT: /api/newUserName');
+  let password = req.auth.password;
+  delete req.auth.password;
+  debug('the body', req.body);
   User.findOne({username: req.auth.username})
-  .then( user => user.comparePasswordHash(req.auth.password))
-  .then( user => User.findByIdAndUpdate(user._id, user, {$new: true} ))
+  .then( user => user.comparePasswordHash(password))
+  .then( user => User.findByIdAndUpdate(user._id, req.body, {new: true} ))
   .then( user => {
     if(!user){
       return next(createError(404, 'user not found'))
     }
     debug('inside put', user);
-    res.send('password updated');
+    res.json(user);
   })
   .catch(next);
 });
