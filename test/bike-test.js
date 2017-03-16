@@ -16,6 +16,7 @@ require('../server.js');
 const sampleBike = {
   bikeName: 'sample name',
   category: 'sample category',
+  photoKey: 'photodest.jpg',
   photoURI: 'photodest.jpg'
 };
 
@@ -31,7 +32,7 @@ const sampleUser = {
   admin: true
 };
 
-describe('Bike Routes', function() {
+describe.only('Bike Routes', function() {
   afterEach( done => {
     Promise.all([
       Bike.remove({}),
@@ -42,6 +43,15 @@ describe('Bike Routes', function() {
     .catch(done);
   });
   describe('POST: /api/mfr/:mfrID/bike', function() {
+    before( done => {
+      Promise.all([
+        Bike.remove({}),
+        Mfr.remove({}),
+        User.remove({})
+      ])
+      .then( () => done())
+      .catch(done);
+    });
     before( done => {
       new User(sampleUser)
       .generatePasswordHash(sampleUser.password)
@@ -70,11 +80,14 @@ describe('Bike Routes', function() {
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
-        .send(sampleBike)
+        .field('bikeName', sampleBike.bikeName)
+        .field('category', sampleBike.category)
+        .attach('image', `${__dirname}/data/test.jpg`)
         .end((err, res) => {
           if(err) return done(err);
           expect(res.status).to.equal(200);
           expect(res.body.bikeName).to.equal(sampleBike.bikeName);
+          debug(res.body);
           done();
         });
       });
