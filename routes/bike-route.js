@@ -24,7 +24,6 @@ bikeRouter.post('/api/mfr/:mfrID/bike', bearerAuth, upload.single('image'), json
 
   if(!req.body.bikeName) return next(createError(400, 'Need a bike name'));
   if(!req.body.category) return next(createError(400, 'Need a category'));
-  if(!req.params.mfrID) return next(createError(400, 'Need a mfr'));
   if(!req.file) return next(createError(400, 'Need a photo'));
   if(!req.file.path) return next(createError(500, 'file not saved'));
 
@@ -38,7 +37,6 @@ bikeRouter.post('/api/mfr/:mfrID/bike', bearerAuth, upload.single('image'), json
   };
   s3methods.uploadObjectProm(params)
   .then( s3data => {
-
     del([`${dataDir}/*`]);
     req.body.photoKey = s3data.Key;
     req.body.photoURI = s3data.Location;
@@ -46,7 +44,6 @@ bikeRouter.post('/api/mfr/:mfrID/bike', bearerAuth, upload.single('image'), json
     .then( mfr => {
       if(!mfr) return next(createError(400, 'Mfr not found'));
       req.body.mfrID = mfr._id;
-      debug(req.body);
       return Bike(req.body).save()
       .then( bike => {
         res.json(bike);

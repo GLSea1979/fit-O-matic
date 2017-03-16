@@ -16,7 +16,6 @@
 pkg/
 src/
 ##DATA##
-test/data/*
 
 ### OSX ###
 *.DS_Store
