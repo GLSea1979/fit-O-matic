@@ -60,7 +60,7 @@ describe('Auth Routes', function(){
             email: 'test email',
             password: 'testpassword',
             admin: true
-          }
+          };
           request.post(`${url}/api/signup`)
           .send(brokenUser)
           .set('Content-Type', 'application/json')
@@ -75,7 +75,7 @@ describe('Auth Routes', function(){
             username: 'test username',
             password: 'testpassword',
             admin: true
-          }
+          };
           request.post(`${url}/api/signup`)
           .send(brokenUser)
           .set('Content-Type', 'application/json')
@@ -90,7 +90,7 @@ describe('Auth Routes', function(){
             username: 'test username',
             email: 'test email',
             admin: true
-          }
+          };
           request.post(`${url}/api/signup`)
           .send(brokenUser)
           .set('Content-Type', 'application/json')
@@ -105,7 +105,7 @@ describe('Auth Routes', function(){
             username: 'test username',
             email: 'test email',
             password: 'testpassword'
-          }
+          };
           request.post(`${url}/api/signup`)
           .send(brokenUser)
           .set('Content-Type', 'application/json')
@@ -122,7 +122,7 @@ describe('Auth Routes', function(){
       let user = new User(sampleUser);
       user.generatePasswordHash(sampleUser.password)
       .then( user => {
-        return user.save()
+        return user.save();
       })
       .then( user => {
         this.tempUser = user;
@@ -163,7 +163,7 @@ describe('Auth Routes', function(){
         request.get(`${url}/api/signin`)
         .auth('wrong username', 'testpassword')
         .end((err, res) => {
-          expect(err.status).to.equal(400);
+          expect(err.status).to.equal(401);
           done();
         });
       });
@@ -175,8 +175,7 @@ describe('Auth Routes', function(){
       let user = new User(sampleUser);
       user.generatePasswordHash(sampleUser.password)
       .then( user => {
-        return user.save()
-
+        return user.save();
       })
       .then( user => {
         this.tempUser = user;
