@@ -32,7 +32,7 @@ const sampleUser = {
   admin: true
 };
 
-describe.only('Bike Routes', function() {
+describe('Bike Routes', function() {
   afterEach( done => {
     Promise.all([
       Bike.remove({}),
