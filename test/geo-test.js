@@ -52,6 +52,12 @@ const sampleMeasure2 = {
   result: bikeAlgorithm.basicfit(167.42, 76.10)
 };
 
+const sampleMeasure3 = {
+  height: 162.73,
+  inseam: 82.19,
+  result: bikeAlgorithm.basicfit(162.73, 82.19)
+};
+
 describe('Bike Geometry Routes', function() {
   afterEach( done => {
     Promise.all([
@@ -211,6 +217,20 @@ describe('Bike Geometry Routes', function() {
         debug(res.body, 'second one');
         expect(res.status).to.equal(200);
         expect(res.body.topTube).to.equal(sampleMeasure2.result);
+        done();
+      });
+    });
+
+    it('should return a different bike geometry object', done => {
+      request.get(`${url}/api/geo/?height=${sampleMeasure3.height}&inseam=${sampleMeasure3.inseam}`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        debug(res.body, 'second one');
+        expect(res.status).to.equal(200);
+        expect(res.body.topTube).to.equal(sampleMeasure3.result);
         done();
       });
     });
