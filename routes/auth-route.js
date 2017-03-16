@@ -34,25 +34,10 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 authRouter.get('/api/signin', basicAuth, function(req, res, next){
   debug('GET: /api/signin');
   User.findOne({username: req.auth.username})
-  .then( user => {
-    if (!user) {
-      return next(createError(400, 'user not found'));
-    }
-    return user.comparePasswordHash(req.auth.password)
-  })
-  .then( user => {
-    if (!user) {
-      return next(createError(400, 'user not found'));
-    }
-    return user.generateToken()
-  })
-  .then( token => {
-    if (!token) {
-      return next(createError(400, 'token not found'));
-    }
-    return res.send(token)
-  })
-  .catch(next);
+  .then( user => user.comparePasswordHash(req.auth.password))
+  .then( user => user.generateToken())
+  .then( token => res.send(token))
+  .catch( () => next(createError(401,'invalid login')));
 });
 
 authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, next){

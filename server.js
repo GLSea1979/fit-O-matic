@@ -32,4 +32,4 @@ app.use(bikeGeoRouter);
 app.use(mfrRouter);
 app.use(bikeRouter);
 app.use(errors);
-app.listen(PORT, () => debug('server up:', PORT));
+app.listen(PORT, () => debug('server up on:', PORT));
