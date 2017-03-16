@@ -15,6 +15,14 @@
 
 pkg/
 src/
+##DATA##
+test/data/*
+
+### OSX ###
+*.DS_Store
+.AppleDouble
+.LSOverride
+
 
 ### MonoDevelop ###
 #User Specific

@@ -9,6 +9,7 @@ const BikeSchema = Schema({
   mfrID: { type: Schema.Types.ObjectId, required: true},
   category: { type: String, required: true},
   photoURI: { type: String, required: true},
+  photoKey: { type: String, required: false},
   url: { type: String },
   price: { type: Number},
   modelYear: { type: String},
