@@ -24,13 +24,23 @@ profileRouter.post('/api/profile/:userid', bearerAuth, jsonParser,     function(
   });
 });//end POST
 
+profileRouter.get('/api/profile/:id/bikes', bearerAuth ,function(req, res, next){
+  debug('GET: /api/profile/:id');
+  Profile.findOne({userID:req.params.id})
+  .populate('geoID')
+  .then( profile => {
+    if(!profile) return next(createError(404, 'nailed it dork'));
+    debug('whole shibang', profile);
+    res.json(profile);
+  })
+  .catch(next);
+});
+
 profileRouter.get('/api/profile/:id', bearerAuth ,function(req, res, next){
   debug('GET: /api/profile/:id');
   Profile.findOne({userID:req.params.id})
   .then( profile => {
-
     if(!profile) return next(createError(404, 'biffed it'));
-
     res.json(profile);
   })
   .catch(next);
