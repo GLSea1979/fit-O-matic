@@ -1,12 +1,13 @@
 'use strict';
 
+const debug = require('debug')('fit-O-matic:mfr-test');
 const expect = require('chai').expect;
 const request = require('superagent');
-const debug = require('debug')('fit-O-matic:mfr-test');
 const Promise = require('bluebird');
 
-const User = require('../model/user.js');
 const Mfr = require('../model/mfr.js');
+const User = require('../model/user.js');
+const BikeProfile = require('../model/bike.js');
 const url = `http://localhost:${process.env.PORT}`;
 
 require('../server.js');
@@ -25,6 +26,17 @@ const sampleUser = {
   email: 'test email',
   password: 'test pass',
   admin: true
+};
+
+const sampleBikeProfile = {
+  bikeName: 'test name',
+  category: 'test category',
+  photoURI: 'emmereffer.jpg'
+};
+const sampleBikeProfile2 = {
+  bikeName: 'test name2',
+  category: 'test category2',
+  photoURI: 'emmereffer2.jpg'
 };
 
 describe('Mfr Routes', function(){
@@ -144,6 +156,105 @@ describe('Mfr Routes', function(){
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body.name).to.equal(sampleMfr.name);
+          done();
+        });
+      });
+    });
+
+    describe('with an invalid id', () => {
+      it('should return a bad request', done => {
+        request.get(`${url}/api/mfr/454321`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(err.message).to.equal('Bad Request');
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('PUT: /api/routes/mfr/:id', () => {
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      new Mfr(sampleMfr).save()
+      .then( mfr => {
+        this.tempMfr = mfr;
+        done();
+      })
+      .catch(done);
+    });
+    describe('with a valid ID and body', () => {
+      it('should return an updated name', done => {
+        request.put(`${url}/api/mfr/${this.tempMfr._id}`)
+        .send({name: 'updated name'})
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body.name).to.equal('updated name');
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+  });
+  describe('DELETE: /api/mfr/:id', function() {
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      new Mfr(sampleMfr).save()
+      .then( mfr => {
+        this.tempMfr = mfr;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      sampleBikeProfile.mfrID = this.tempMfr._id;
+      new BikeProfile(sampleBikeProfile).save()
+      .then(bike => {
+        this.tempBike = bike;
+        done();
+      })
+      .catch(done);
+    });
+    describe('with a valid id', () => {
+      it('should do something like delete a mfr and bikes by ids', done => {
+        request.delete(`${url}/api/mfr/${this.tempMfr._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(204);
           done();
         });
       });

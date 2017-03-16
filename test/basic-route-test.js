@@ -1,21 +1,7 @@
-// 'use strict';
-//
-// const expect = require('chai').expect;
-// const request = require('superagent');
-// const debug = require('debug')('fit-O-matic:basic-route-test');
-//
-// const PORT = process.env.PORT || 5000;
-// const url = `http://localhost:${PORT}`;
-//
-// require('../server.js');
-
 'use strict';
 
 const expect = require('chai').expect;
 const request = require('superagent');
-// const debug = require('debug')('fit-O-matic:auth-test');
-
-// const User = require('../model/user.js');
 const PORT = process.env.PORT || 5000;
 const url = `http://localhost:${PORT}`;
 
