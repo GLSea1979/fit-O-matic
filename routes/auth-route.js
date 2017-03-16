@@ -5,6 +5,7 @@ const createError = require('http-errors');
 const jsonParser = require('body-parser').json();
 const debug = require('debug')('fit-O-matic:auth-route');
 
+const Profile = require('../model/profile.js');
 const User = require('../model/user.js');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
@@ -68,5 +69,14 @@ authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, nex
     }
     res.json(user);
   })
+  .catch(next);
+});
+
+authRouter.delete('/api/remove/:id', basicAuth, function(req, res, next){
+  debug('DELETE: /api/remove/:id');
+
+  User.findByIdAndRemove(req.params.id)
+  .then(Profile.findByIdAndRemove(req.params.id))
+  .then( () => res.sendStatus(204))
   .catch(next);
 });
