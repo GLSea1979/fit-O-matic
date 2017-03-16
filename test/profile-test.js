@@ -5,6 +5,7 @@ const expect = require('chai').expect;
 const Promise = require('bluebird');
 const mongoose = require('mongoose');
 const debug = require('debug')('fit-O-matic:profile-route-test');
+const del = require('del');
 
 const Mfr = require('../model/mfr.js');
 const User = require('../model/user.js');
@@ -14,7 +15,10 @@ const Profile = require('../model/profile.js');
 
 mongoose.Promise = Promise;
 
+const s3methods = require('../lib/s3-methods.js');
+
 const url = `http://localhost:${process.env.PORT}`;
+const dataDir = `${__dirname}/../data`;
 
 require('../server.js');
 
@@ -198,7 +202,7 @@ describe('Profile Routes', function(){
       });
     });
 
-    describe('with an no body resulting in 400', () => {
+    describe('with an bad id resulting in 400', () => {
       it('should return an error', done => {
         request.put(`${url}/api/profile/bad`)
         .set({
@@ -206,6 +210,109 @@ describe('Profile Routes', function(){
         })
         .end((err, res) => {
           expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('without a body attached resulting in 400', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+  });//end PUT
+  describe('PUT: /api/profile/photo/:id', function(){
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });//end before
+
+    before( done => {
+      sampleProfile.userID = this.tempUser._id;
+      new Profile(sampleProfile).save()
+      .then( profile => {
+        this.tempProfile = profile;
+        done();
+      })
+      .catch(done);
+    });
+    after( done => {
+      if(this.tempKey) {
+        let params = {
+          Bucket: process.env.AWS_BUCKET,
+          Key: this.tempKey
+        };
+        s3methods.deleteObjectProm(params)
+        .then( () => {
+          del([`${dataDir}/*`]);
+          debug('photo deleted');
+          done();
+        });
+      }
+    });
+    describe('with a valid request body and photo file', () => {
+      it('should return an updated profile object', done => {
+        request.put(`${url}/api/profile/photo/${this.tempProfile._id}`)
+        .attach('image', `${__dirname}/data/test.jpg`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body.photoURI).to.not.equal(undefined);
+          expect(res.status).to.equal(200);
+          this.tempKey = res.body.photoKey;
+          done();
+        });
+      });
+    });
+
+    describe('without a file attached resulting in 400', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/profile/photo/${this.tempProfile._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('without a body attached resulting in 400', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/profile/photo/${this.tempProfile._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .type('text/plain')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('without an auth header resulting in 401', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/profile/photo/${this.tempProfile._id}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
           done();
         });
       });
@@ -354,7 +461,7 @@ describe('Profile Routes', function(){
           expect(res.body.geoID.length).to.equal(1);
           done();
         });
-      })
-    })
+      });
+    });
   });
 });//end profile route tests

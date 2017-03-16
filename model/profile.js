@@ -7,7 +7,8 @@ const Schema = mongoose.Schema;
 const profileSchema = Schema({
   name: {type: String, required: true},
   gender: {type: String, required: false},
-  photo: {type: String, required: false},
+  photoURI: {type: String},
+  photoKey: {type: String},
   inseam: {type: Number},
   torso: {type: Number},
   height: {type: Number},
