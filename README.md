@@ -1,4 +1,4 @@
-# fit-O-matic ![fit-O-matic logo](img/fit-O-matic.png)
+![fit-O-matic logo](img/fit-O-matic.png)
 
 [![Coverage Status](https://coveralls.io/repos/github/GLSea1979/fit-O-matic/badge.svg?branch=master)](https://coveralls.io/github/GLSea1979/fit-O-matic?branch=master)
 [![Build Status](https://travis-ci.org/GLSea1979/fit-O-matic.svg?branch=staging)](https://travis-ci.org/GLSea1979/fit-O-matic)
@@ -87,30 +87,30 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjdlNzdjOGIzNzRlM2IxYzVjZTZhOTM
 Example: https://fitomatic.herokuapp.com/api/signin
 Required data:
     - Login credentials in authorization header:
-    ```
+```
       {
         Authorization: `Basic username:password`
       }
 
-    ```  
+```
     - Returned will be a token for any subsequent requests
 
 ## PUT /api/newPassword
 Required data:
     - Username and password. In response you will receive your user information with a hash of the new password:
-    ```
+```
     { _id: '58cadfb05f2ff5567c974e41',
   username: 'some new name',
   email: 'test email',
   password: '$2a$10$.fxE4md8/a6msDdntIWfEe0/d7aR0nPjx/aY1nPJDZy41NzRMKxJG',
   admin: true,
   __v: 0 }
-  ```
+ ```
 
 ## POST: /api/profile/:userid
 Required data:
   - Provide a profile id and receive user properties:
-  ```
+```
   { __v: 0,
   name: 'Fresh Name',
   gender: 'female',
@@ -119,11 +119,11 @@ Required data:
   _id: '58cae148f6877b56d197f598',
   geoID: [],
   createdOn: '2017-03-16T19:02:32.927Z' }
-  ```
+```
 ## GET: /api/profile/:id
 Required data:
   - Provide an id and receive all profile properties for that user:
-  ```
+```
   { _id: '58cae3a8c9b2cc57255bac7f',
   name: 'tested',
   gender: 'man',
@@ -132,12 +132,12 @@ Required data:
   __v: 0,
   geoID: [],
   createdOn: '2017-03-16T19:12:40.976Z' }
-  ```
+```
 
 ## GET /api/profile/:id/bikes
 Required data:
   - Provide an id and receive an object containing the bikes related to this user:
-  ```
+```
   { _id: '58cae200d188fa56f60f5e79',
     name: 'Mrs. Test Name',
     gender: 'female',
@@ -150,11 +150,11 @@ Required data:
          __v: 0,
          bikeID: [Object] } ],
     createdOn: '2017-03-16T19:05:36.743Z' }
-  ```
+```
 ## PUT: /api/profile/:id
 Required data:
   - Provide an id and update properties on a user profile. Returned will be the updated profile object:
-  ```
+```
   { _id: '58cae47911c05657461beb86',
   name: 'Mr. Updated Name',
   gender: 'female',
@@ -163,7 +163,7 @@ Required data:
   __v: 0,
   geoID: [],
   createdOn: '2017-03-16T19:16:09.253Z' }
-  ```
+```
 
 ## DELETE: /api/profile/:id
 Required data:
@@ -178,12 +178,12 @@ Required data:
   topTubeLength: 52,
   _id: '58cad65164b684551c2a39e1',
   bikeID: [ '58cad65064b684551c2a39e0' ] }
-  ```
+```
 
 ## GET /api/bike/:bikeID
 Required data:
   - Provide a bike ID and receive an object:
-  ```
+```
   { _id: '58cad308d70f5054a910c306',
     bikeName: 'sample name',
     category: 'sample category',
@@ -192,7 +192,7 @@ Required data:
     mfrID: '58cad308d70f5054a910c305',
     __v: 0,
     created: '2017-03-16T18:01:44.456Z' }
-  ```
+```
 
 ## POST: /api/mfr/:mfrID/bike
 Required data:
@@ -206,12 +206,12 @@ Required data:
   mfrID: '58cad46d60fedf54d07f7fc0',
   _id: '58cad46d60fedf54d07f7fc1',
   created: '2017-03-16T18:07:41.876Z' }
-  ```
+```
 
 ## GET: /api/geo/?height=&inseam=
 Required data:
   - Provide your height and inseam in the query string to receive a list of bikes fit for you:
-  ```
+```
   { topTube: 52,
   geo:
    [ { _id: '58cad7044711ad553cf0e255',
@@ -219,12 +219,12 @@ Required data:
        topTubeLength: 52,
        __v: 0,
        bikeID: [Object] } ] }
-  ```
+```
 
 ## PUT: /api/geo/:geoID
 Required data:
   - Passing a geometry ID will return an object:
-  ```
+```
   { _id: '58cad7b0ec3e58555cb8b681',
   bikeSizeName: 'updated name',
   topTubeLength: 52,
@@ -233,27 +233,27 @@ Required data:
    [ '58cad7afec3e58555cb8b67b',
      '58cad7afec3e58555cb8b67c',
      '58cad7b0ec3e58555cb8b680' ] }
-  ```
+```
 
 ## POST: /api/mfr
  Required data:
   - Name and website will return a new Mfr object:
-  ```
+```
   { __v: 0,
     name: 'test brand',
     website: 'www.testerbrand.com',
     _id: '58cadb6554a4a655c10c8ba0' }
-  ```
+```
 
 ## GET: /api/mfr/:id
   Required data:
    - Manufacturer's ID will return information about that mfr:
-   ```
+```
    { _id: '58cadcdeed15e355e2bb053b',
   name: 'test brand',
   website: 'www.testerbrand.com',
   __v: 0 }
-   ```
+```
 ### Testing
 mocha test runner
 chai(expect)
