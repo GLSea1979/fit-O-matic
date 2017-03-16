@@ -255,5 +255,3 @@ describe('Bike Routes', function() {
     });
   });
 });
-
-

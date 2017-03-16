@@ -252,7 +252,7 @@ describe('Profile Routes', function(){
     });
   });
 
-  describe('POST: /api/profile', function(){
+  describe('POST: /api/profile/:id', function(){
     before( done => {
       new User(sampleUser)
       .generatePasswordHash(sampleUser.password)
