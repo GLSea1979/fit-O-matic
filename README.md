@@ -1,4 +1,4 @@
-# fit-O-matic
+# fit-O-matic ![fit-O-matic logo](img/fit-O-matic.png)
 
 [![Coverage Status](https://coveralls.io/repos/github/GLSea1979/fit-O-matic/badge.svg?branch=master)](https://coveralls.io/github/GLSea1979/fit-O-matic?branch=master)
 [![Build Status](https://travis-ci.org/GLSea1979/fit-O-matic.svg?branch=staging)](https://travis-ci.org/GLSea1979/fit-O-matic)
@@ -90,7 +90,7 @@ Required data
     ```{
         Authorization: `Basic username:password`
       }
-    ```    
+    ```
 ## POST: /api/profile/:userid
 Required data
   -User id
