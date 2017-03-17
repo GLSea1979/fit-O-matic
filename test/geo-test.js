@@ -46,6 +46,18 @@ const sampleMeasure =  {
   result: bikeAlgorithm.basicfit(172.7, 80.01)
 };
 
+const sampleMeasure2 = {
+  height: 167.42,
+  inseam: 76.10,
+  result: bikeAlgorithm.basicfit(167.42, 76.10)
+};
+
+const sampleMeasure3 = {
+  height: 162.73,
+  inseam: 82.19,
+  result: bikeAlgorithm.basicfit(162.73, 82.19)
+};
+
 describe('Bike Geometry Routes', function() {
   afterEach( done => {
     Promise.all([
@@ -180,18 +192,49 @@ describe('Bike Geometry Routes', function() {
     });
 
     it('should return a bike geometry object', done => {
+
       request.get(`${url}/api/geo/?height=${sampleMeasure.height}&inseam=${sampleMeasure.inseam}`)
       .set({
         Authorization: `Bearer ${this.tempToken}`
       })
       .end((err, res) => {
         if (err) return done(err);
+        debug(res.body, 'first one');
         expect(res.status).to.equal(200);
         expect(res.body.geo[0].bikeID[1].bikeName).to.equal(this.tempBike2.bikeName);
         expect(res.body.topTube).to.equal(sampleMeasure.result);
         done();
       });
     });
+
+    it('should return a different bike geometry object', done => {
+      request.get(`${url}/api/geo/?height=${sampleMeasure2.height}&inseam=${sampleMeasure2.inseam}`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        debug(res.body, 'second one');
+        expect(res.status).to.equal(200);
+        expect(res.body.topTube).to.equal(sampleMeasure2.result);
+        done();
+      });
+    });
+
+    it('should return a different bike geometry object', done => {
+      request.get(`${url}/api/geo/?height=${sampleMeasure3.height}&inseam=${sampleMeasure3.inseam}`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        debug(res.body, 'second one');
+        expect(res.status).to.equal(200);
+        expect(res.body.topTube).to.equal(sampleMeasure3.result);
+        done();
+      });
+    });
+
     it('should return a 400 with missing height', done => {
       request.get(`${url}/api/geo/?height=&inseam=${sampleMeasure.inseam}`)
       .set({

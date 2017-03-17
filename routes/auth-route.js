@@ -5,6 +5,7 @@ const createError = require('http-errors');
 const jsonParser = require('body-parser').json();
 const debug = require('debug')('fit-O-matic:auth-route');
 
+const Profile = require('../model/profile.js');
 const User = require('../model/user.js');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
@@ -31,31 +32,13 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
   .catch(next);
 });
 
-
-//  want to test for wrong username but am getting pushed to error middleware not sure what to do next
-//  think I need to handle it in the catch block and put next at the end... maybe...????
 authRouter.get('/api/signin', basicAuth, function(req, res, next){
   debug('GET: /api/signin');
   User.findOne({username: req.auth.username})
-  .then( user => {
-    if (!user) {
-      return next(createError(400, 'user not found'));
-    }
-    return user.comparePasswordHash(req.auth.password)
-  })
-  .then( user => {
-    if (!user) {
-      return next(createError(400, 'user not found'));
-    }
-    return user.generateToken()
-  })
-  .then( token => {
-    if (!token) {
-      return next(createError(400, 'token not found'));
-    }
-    return res.send(token)
-  })
-  .catch(next);
+  .then( user => user.comparePasswordHash(req.auth.password))
+  .then( user => user.generateToken())
+  .then( token => res.send(token))
+  .catch( () => next(createError(401,'invalid login')));
 });
 
 authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, next){
@@ -71,5 +54,14 @@ authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, nex
     }
     res.json(user);
   })
+  .catch(next);
+});
+
+authRouter.delete('/api/remove/:id', basicAuth, function(req, res, next){
+  debug('DELETE: /api/remove/:id');
+
+  User.findByIdAndRemove(req.params.id)
+  .then(Profile.findByIdAndRemove(req.params.id))
+  .then( () => res.sendStatus(204))
   .catch(next);
 });

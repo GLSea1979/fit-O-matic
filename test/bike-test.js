@@ -4,18 +4,23 @@ const expect = require('chai').expect;
 const request = require('superagent');
 const Promise = require('bluebird');
 const debug = require('debug')('fit-O-matic:bike-route-test');
+const del = require('del');
 
 const Bike = require('../model/bike.js');
 const Mfr = require('../model/mfr.js');
 const User = require('../model/user.js');
 
+const s3methods = require('../lib/s3-methods.js');
+
 const url = `http://localhost:${process.env.PORT}`;
+const dataDir = `${__dirname}/../data`;
 
 require('../server.js');
 
 const sampleBike = {
   bikeName: 'sample name',
   category: 'sample category',
+  photoKey: 'photodest.jpg',
   photoURI: 'photodest.jpg'
 };
 
@@ -43,6 +48,15 @@ describe('Bike Routes', function() {
   });
   describe('POST: /api/mfr/:mfrID/bike', function() {
     before( done => {
+      Promise.all([
+        Bike.remove({}),
+        Mfr.remove({}),
+        User.remove({})
+      ])
+      .then( () => done())
+      .catch(done);
+    });
+    before( done => {
       new User(sampleUser)
       .generatePasswordHash(sampleUser.password)
       .then( user => user.save())
@@ -64,31 +78,117 @@ describe('Bike Routes', function() {
       })
       .catch(done);
     });
+    after( done => {
+      if(this.tempKey) {
+        let params = {
+          Bucket: process.env.AWS_BUCKET,
+          Key: this.tempKey
+        };
+        s3methods.deleteObjectProm(params)
+        .then( () => {
+          del([`${dataDir}/*`]);
+          done();
+        });
+      }
+    });
+
     describe('with a valid body', () => {
-      it('should return a new bike', done => {
+      it('should return a new ike', done => {
         request.post(`${url}/api/mfr/${this.tempMfr._id}/bike`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
-        .send(sampleBike)
+        .field('bikeName', sampleBike.bikeName)
+        .field('category', sampleBike.category)
+        .attach('image', `${__dirname}/data/test.jpg`)
         .end((err, res) => {
           if(err) return done(err);
           expect(res.status).to.equal(200);
           expect(res.body.bikeName).to.equal(sampleBike.bikeName);
+          this.tempKey = res.body.photoKey;
           done();
         });
       });
     });
-    describe('with an invalid body', () => {
-      it('should return a new bike', done => {
+    describe('with a missing bikeName', () => {
+      it('should return a 400', done => {
         request.post(`${url}/api/mfr/${this.tempMfr._id}/bike`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
-        .send({bad: 'data'})
+        .field('category', sampleBike.category)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('with a missing category', () => {
+      it('should return a 400', done => {
+        request.post(`${url}/api/mfr/${this.tempMfr._id}/bike`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .field('bikeName', sampleBike.bikeName)
+        .field('category', sampleBike.category)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('with a missing file', () => {
+      it('should return a 400', done => {
+        request.post(`${url}/api/mfr/${this.tempMfr._id}/bike`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .field('bikeName', sampleBike.bikeName)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('with a bad mfr', () => {
+      it('should return a 400', done => {
+        request.post(`${url}/api/mfr/58ca0b582604d19172211e44/bike`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .field('bikeName', sampleBike.bikeName)
+        .attach('image', `${__dirname}/data/test.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('without an auth token', () => {
+      it('should return a 401', done => {
+        request.post(`${url}/api/mfr/${this.tempMfr._id}/bike`)
+        .set({
+          Authorization: 'Bearer '
+        })
+        .send(sampleBike)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
+    describe('without an auth header', () => {
+      it('should return a 401', done => {
+        request.post(`${url}/api/mfr/${this.tempMfr._id}/bike`)
+        .send(sampleBike)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
           done();
         });
       });
@@ -141,7 +241,7 @@ describe('Bike Routes', function() {
       });
     });
     describe('with an invalid bike ID', () => {
-      it('should return a bike', done => {
+      it('should return an error', done => {
         request.get(`${url}/api/bike/58c9a29b0e7f6b54659c7c8a`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
@@ -155,5 +255,3 @@ describe('Bike Routes', function() {
     });
   });
 });
-
-
