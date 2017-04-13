@@ -208,6 +208,11 @@ describe('Mfr Routes', function(){
         })
         .end((err, res) => {
           if (err) return done(err);
+
+          debug('fuuuuuuuuuuck ----------------!!!');
+          console.log(res.body);
+
+
           expect(res.body.name).to.equal('updated name');
           expect(res.status).to.equal(200);
           done();

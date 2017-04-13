@@ -17,6 +17,17 @@ This app is built entirely with JS and uses a MongoDB database. Although a front
 ### Summary
 The fit-O-matic API allows users to create profile, input some measurements, and receive a list of bicycles which will best fit them.
 
+### About The Team
+
+Gary Lundgren:
+  As a software developer my focus has been on building high quality applications. I have specialized in utilizing the MEAN stack for development and am always on a journey to learn and use new technologies.
+
+Zachary Crumbo:
+   I'm a full stack developer with a background in design,  photography, and ecommerce. I love to learn, to debug, and to find connections.
+
+Regan O'Neill:
+  After gaining development experience at a digital marketing agency, I wanted to learn more about the backend and front-end frameworks.
+
 ## Schemas
 
 ### User
@@ -68,7 +79,7 @@ The fit-O-matic API allows users to create profile, input some measurements, and
 
 # Routes
 
-## POST:api/signup
+## POST: /api/signup
 Example: https://fitomatic.herokuapp.com/api/signup
 Required Data:
   -  Provide username, password, email as JSON requests
@@ -95,7 +106,7 @@ Required data:
 ```
     - Returned will be a token for any subsequent requests
 
-## PUT /api/newPassword
+## PUT: /api/newPassword
 Required data:
     - Username and password. In response you will receive your user information with a hash of the new password:
 ```
@@ -106,6 +117,9 @@ Required data:
   admin: true,
   __v: 0 }
  ```
+## DELETE: /api/remove/:id
+Required data:
+  - Provide user id to delete the user (and their profile), then receive a 204 status in return.
 
 ## POST: /api/profile/:userid
 Required data:
@@ -134,7 +148,7 @@ Required data:
   createdOn: '2017-03-16T19:12:40.976Z' }
 ```
 
-## GET /api/profile/:id/bikes
+## GET: /api/profile/:id/bikes
 Required data:
   - Provide an id and receive an object containing the bikes related to this user:
 ```
@@ -236,7 +250,7 @@ Required data:
 ```
 
 ## POST: /api/mfr
- Required data:
+Required data:
   - Name and website will return a new Mfr object:
 ```
   { __v: 0,
@@ -244,9 +258,18 @@ Required data:
     website: 'www.testerbrand.com',
     _id: '58cadb6554a4a655c10c8ba0' }
 ```
+## PUT: /api/mfr/:id
+Required data:
+  - Manufacturer's ID will return:
+  ```
+  { _id: '58cb22f463c6155c777fd0d7',
+  name: 'updated name',
+  website: 'www.testeroooo.com',
+  __v: 0 }
+  ```
 
 ## GET: /api/mfr/:id
-  Required data:
+Required data:
    - Manufacturer's ID will return information about that mfr:
 ```
    { _id: '58cadcdeed15e355e2bb053b',
@@ -254,6 +277,10 @@ Required data:
   website: 'www.testerbrand.com',
   __v: 0 }
 ```
+## DELETE: /api/mfr/:id
+Required data: mfr id
+  - Returns a status code of 204.
+
 ### Testing
 mocha test runner
 chai(expect)
@@ -263,3 +290,7 @@ eslint
 ### Continuous integration
 
 travis-cl integrated in this project.
+
+### Code Coverage
+
+coveralls.io linked through gitHub.
