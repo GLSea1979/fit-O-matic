@@ -65,3 +65,14 @@ bikeRouter.get('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
   })
   .catch(next);
 });
+
+bikeRouter.get('/api/bikes/all', bearerAuth, function(req, res, next) {
+  debug('GET /api/bikes/all');
+
+  Bike.find()
+  .then( bikes => {
+    if(!bikes) return next(createError(400, 'no bikes found'));
+    res.json(bikes);
+  })
+  .catch(next);
+});
