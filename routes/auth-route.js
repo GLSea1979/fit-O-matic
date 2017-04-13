@@ -22,13 +22,22 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
   let password = req.body.password;
   delete req.body.password;
   let user = new User(req.body);
-
   user.generatePasswordHash(password)
   .then( user => user.save())
   .then( user => {
+    let profile = new Profile();
+    profile.userID = user._id;
+    profile.save();
+  })
+  .then( () => {
     return user.generateToken();
   })
-  .then( token => res.send(token))
+  .then( token => {
+    let authObj = {};
+    authObj.token = token;
+    authObj.userId = user._id;
+    res.send(authObj);
+  })
   .catch(next);
 });
 

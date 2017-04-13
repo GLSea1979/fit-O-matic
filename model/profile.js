@@ -5,9 +5,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const profileSchema = Schema({
-  name: {type: String, required: true},
-  gender: {type: String, required: false},
+  name: {type: String},
   photoURI: {type: String},
+  gender: {type: String},
   photoKey: {type: String},
   inseam: {type: Number},
   torso: {type: Number},

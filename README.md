@@ -19,14 +19,14 @@ The fit-O-matic API allows users to create profile, input some measurements, and
 
 ### About The Team
 
-Gary Lundren:
+Gary Lundgren:
   As a software developer my focus has been on building high quality applications. I have specialized in utilizing the MEAN stack for development and am always on a journey to learn and use new technologies.
 
 Zachary Crumbo:
    I'm a full stack developer with a background in design,  photography, and ecommerce. I love to learn, to debug, and to find connections.
 
 Regan O'Neill:
-  After gaining development experience at a digital marketing agency, I wanted to learn more about the backend and front-end frameworks. 
+  After gaining development experience at a digital marketing agency, I wanted to learn more about the backend and front-end frameworks.
 
 ## Schemas
 

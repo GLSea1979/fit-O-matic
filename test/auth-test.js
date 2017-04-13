@@ -96,7 +96,7 @@ describe('Auth Routes', function(){
             done();
           });
         });
-        it('should return a 400 error', done => {
+        it('should return a 400 error, no admin', done => {
           let brokenUser = {
             username: 'test username',
             email: 'test email',
