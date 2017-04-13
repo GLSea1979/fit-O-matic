@@ -28,7 +28,12 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
   .then( user => {
     return user.generateToken();
   })
-  .then( token => res.send(token))
+  .then( token => {
+      let authObj = {};
+      authObj.token = token;
+      authObj.userId = user._id;
+      res.send(authObj);
+  })
   .catch(next);
 });
 
