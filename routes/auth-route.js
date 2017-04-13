@@ -15,7 +15,7 @@ const authRouter = module.exports = Router();
 authRouter.post('/api/signup', jsonParser, function(req, res, next){
   debug('POST /api/signup');
   if (!req.body.username) return next(createError(400, 'need username'));
-  // if (!req.body.admin) return next(createError(400, 'need admin'));
+  if (!req.body.admin) return next(createError(400, 'need admin'));
   if (!req.body.email) return next(createError(400, 'need an email'));
   if (!req.body.password) return next(createError(400, 'need a password'));
 
@@ -25,18 +25,18 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
   user.generatePasswordHash(password)
   .then( user => user.save())
   .then( user => {
-      let profile = new Profile();
-      profile.userID = user._id;
-      profile.save();
+    let profile = new Profile();
+    profile.userID = user._id;
+    profile.save();
   })
   .then( () => {
     return user.generateToken();
   })
   .then( token => {
-      let authObj = {};
-      authObj.token = token;
-      authObj.userId = user._id;
-      res.send(authObj);
+    let authObj = {};
+    authObj.token = token;
+    authObj.userId = user._id;
+    res.send(authObj);
   })
   .catch(next);
 });
