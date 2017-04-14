@@ -34,6 +34,19 @@ mfrRouter.get('/api/mfr/:id', bearerAuth, function(req, res, next){
   })
   .catch(next);
 });
+//TODO Add test for get all mfrs
+mfrRouter.get('/api/mfrs', bearerAuth, function(req, res, next){
+  debug('GET: /api/mfrs');
+
+  Mfr.find()
+  .then( mfrs => {
+    if(!mfrs) res.sendStatus(204);
+    res.json(mfrs);
+  })
+  .catch(next);
+});
+
+
 
 mfrRouter.put('/api/mfr/:id', bearerAuth, jsonParser, function(req, res, next){
   debug('PUT: /api/mfr/:id');

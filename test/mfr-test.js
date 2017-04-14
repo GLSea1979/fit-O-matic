@@ -175,7 +175,45 @@ describe('Mfr Routes', function(){
       });
     });
   });
+  describe('GET: /api/mfrs', function() {
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      new Mfr(sampleMfr).save()
+      .then( mfr => {
+        this.tempMfr = mfr;
+        done();
+      })
+      .catch(done);
+    });
+    describe('with a valid request', () => {
+      it('should return all mfrs', done => {
+        request.get(`${url}/api/mfrs`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          //expect(res.body.name).to.equal(sampleMfr.name);
+          done();
+        });
+      });
+    });
 
+
+  });
   describe('PUT: /api/routes/mfr/:id', () => {
     before( done => {
       new User(sampleUser)
@@ -208,11 +246,6 @@ describe('Mfr Routes', function(){
         })
         .end((err, res) => {
           if (err) return done(err);
-
-          debug('fuuuuuuuuuuck ----------------!!!');
-          console.log(res.body);
-
-
           expect(res.body.name).to.equal('updated name');
           expect(res.status).to.equal(200);
           done();
