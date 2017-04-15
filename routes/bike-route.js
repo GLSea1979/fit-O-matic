@@ -66,12 +66,12 @@ bikeRouter.get('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
   .catch(next);
 });
 
-bikeRouter.get('/api/bikes/all', bearerAuth, function(req, res, next) {
-  debug('GET /api/bikes/all');
+bikeRouter.get('/api/bikes', bearerAuth, function(req, res, next) {
+  debug('GET /api/bikes');
 
   Bike.find()
   .then( bikes => {
-    if(!bikes) return next(createError(400, 'no bikes found'));
+    if(!bikes[0]) return res.sendStatus(204);
     res.json(bikes);
   })
   .catch(next);
