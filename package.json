@@ -38,13 +38,15 @@
     "gulp-mocha": "^4.1.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
+    "nodemon": "^1.11.0",
     "superagent": "^3.5.0"
   },
   "scripts": {
     "lint": "gulp lint",
     "test": "DEBUG='fit-O-matic*', mocha",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "start": "DEBUG='fit-O-matic*', node server.js"
+    "start": "DEBUG='fit-O-matic*', node server.js",
+    "watch": "DEBUG='fit-O-matic*', nodemon server.js"
   },
   "repository": {
     "type": "git",
