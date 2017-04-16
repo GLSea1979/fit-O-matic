@@ -46,7 +46,14 @@ authRouter.get('/api/signin', basicAuth, function(req, res, next){
   User.findOne({username: req.auth.username})
   .then( user => user.comparePasswordHash(req.auth.password))
   .then( user => user.generateToken())
-  .then( token => res.send(token))
+  .then( token => {
+    let authObj = {};
+    authObj.token = token;
+    authObj.userId = user._id;
+    debug(authObj, 'AUTH OBJ!!!!');
+    res.send(authObj);
+  })
+  // .then( token => res.send(token))
   .catch( () => next(createError(401,'invalid login')));
 });
 
