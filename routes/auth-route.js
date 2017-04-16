@@ -43,13 +43,16 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 
 authRouter.get('/api/signin', basicAuth, function(req, res, next){
   debug('GET: /api/signin');
+  let authObj = {};
   User.findOne({username: req.auth.username})
   .then( user => user.comparePasswordHash(req.auth.password))
-  .then( user => user.generateToken())
-  .then( token => {
-    let authObj = {};
-    authObj.token = token;
+  .then( user => {
     authObj.userId = user._id;
+    authObj.username = user.username;
+    return user.generateToken();
+  })
+  .then( token => {
+    authObj.token = token;
     debug(authObj, 'AUTH OBJ!!!!');
     res.send(authObj);
   })
@@ -66,7 +69,7 @@ authRouter.put('/api/newUserName', basicAuth, jsonParser, function(req, res, nex
   .then( user => User.findByIdAndUpdate(user._id, req.body, {new: true} ))
   .then( user => {
     if(!user){
-      return next(createError(404, 'user not found'))
+      return next(createError(404, 'user not found'));
     }
     res.json(user);
   })
