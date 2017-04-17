@@ -49,6 +49,7 @@ authRouter.get('/api/signin', basicAuth, function(req, res, next){
   .then( user => {
     authObj.userId = user._id;
     authObj.username = user.username;
+    authObj.email = user.email;
     return user.generateToken();
   })
   .then( token => {
