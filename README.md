@@ -14,6 +14,9 @@ Users can save bikes to a collection to reference at any time.
 # Architecture
 This app is built entirely with JS and uses a MongoDB database. Although a front end has yet to be built, this is a MEAN stack app in the making and will follow MVC principles.
 
+## Entity Relationship Diagram
+![fit-O-matic ERD](img/entityRelationshipDiagramFitOMatic.png)
+
 ### Summary
 The fit-O-matic API allows users to create profile, input some measurements, and receive a list of bicycles which will best fit them.
 

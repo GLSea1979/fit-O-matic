@@ -201,47 +201,47 @@ describe('Auth Routes', function(){
     });
   });
 
-describe('DELETE: /api/remove/:id', function() {
-  before( done => {
-    let user = new User(sampleUser);
-    user.generatePasswordHash(sampleUser.password)
-    .then( user => {
-      return user.save()
-    })
-    .then( user => {
-      this.tempUser = user;
-      done();
-    })
-    .catch(done);
-  });
-  it('should return a 204', done => {
-    request.delete(`${url}/api/remove/${this.tempUser._id}`)
-    .auth('test username', 'testpassword')
-    .end((err, res) => {
-      if (err) return done(err);
-      expect(res.status).to.equal(204);
-      done();
-    });
-  });
-  describe('without an invalid id', () => {
-    it('should return a 400 error for bad request', done => {
-      request.delete(`${url}/api/remove/3333333`)
-      .auth('test username', 'wrong password')
-      .end((err) => {
-        expect(err.status).to.equal(400);
+  describe('DELETE: /api/remove/:id', function() {
+    before( done => {
+      let user = new User(sampleUser);
+      user.generatePasswordHash(sampleUser.password)
+      .then( user => {
+        return user.save();
+      })
+      .then( user => {
+        this.tempUser = user;
         done();
-      });
+      })
+      .catch(done);
     });
-  });
-  describe('without auth', () => {
-    it('should return a 401 error for no authorization', done => {
+    it('should return a 204', done => {
       request.delete(`${url}/api/remove/${this.tempUser._id}`)
+      .auth('test username', 'testpassword')
       .end((err, res) => {
-        expect(err.status).to.equal(401);
+        if (err) return done(err);
+        expect(res.status).to.equal(204);
         done();
       });
     });
+    describe('without an invalid id', () => {
+      it('should return a 400 error for bad request', done => {
+        request.delete(`${url}/api/remove/3333333`)
+        .auth('test username', 'wrong password')
+        .end((err) => {
+          expect(err.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('without auth', () => {
+      it('should return a 401 error for no authorization', done => {
+        request.delete(`${url}/api/remove/${this.tempUser._id}`)
+        .end((err, res) => {
+          expect(err.status).to.equal(401);
+          done();
+        });
+      });
+    });
   });
-});
 
 });
