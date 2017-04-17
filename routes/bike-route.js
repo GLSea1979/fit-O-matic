@@ -66,6 +66,19 @@ bikeRouter.get('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
   .catch(next);
 });
 
+bikeRouter.get('/api/bikes/:mfrID', bearerAuth, function(req, res, next) {
+  debug('GET /api/bikes/:mfrID');
+
+  Bike.find({mfrID: req.params.mfrID})
+  .then( bikes => {
+    if(!bikes) return next(createError(400, 'no bikes'));
+    res.json(bikes);
+  })
+  .catch(next);
+});
+//TODO Write some tests
+
+
 bikeRouter.get('/api/bikes', bearerAuth, function(req, res, next) {
   debug('GET /api/bikes');
 
