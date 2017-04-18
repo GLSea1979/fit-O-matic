@@ -26,6 +26,16 @@ bikeGeometryRouter.post('/api/bike/:bikeID/geometry', bearerAuth, jsonParser, (r
   .catch(next);
 });
 
+bikeGeometryRouter.post('/api/geo', bearerAuth, jsonParser, (req, res, next) => {
+  debug('POST: /api/geo');
+  return BikeGeo(req.body).save()
+  .then( geo => {
+    res.json(geo);
+  })
+  .catch(next)
+});
+// TODO: test this
+
 bikeGeometryRouter.get('/api/geo/:geoID', bearerAuth, function(req, res, next){
   debug('GET: /api/geo/:geoID');
 
@@ -36,6 +46,17 @@ bikeGeometryRouter.get('/api/geo/:geoID', bearerAuth, function(req, res, next){
   })
   .catch(next);
 });
+
+bikeGeometryRouter.get('/api/geos', bearerAuth, function(req, res, next){
+  debug('GET: /api/geos');
+
+  BikeGeo.find({})
+  .then( geos => {
+    res.json(geos);
+  })
+  .catch(next);
+});
+//todo: test!!!!
 
 
 bikeGeometryRouter.get('/api/geo/', bearerAuth, function(req, res, next){
@@ -75,5 +96,3 @@ bikeGeometryRouter.put('/api/geo/:geoID', bearerAuth, jsonParser, function(req, 
   })
   .catch(next);
 });
-
-
