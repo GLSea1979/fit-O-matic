@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const GeoSchema =  Schema({
-  bikeID: [{type: Schema.Types.ObjectId, ref: 'bike', required: true}],
+  bikeID: [{type: Schema.Types.ObjectId, ref: 'bike'}],
   bikeSizeName: {type: String, required: true},
   wheelSize: {type: Number},
   bbDrop: {type: Number},
