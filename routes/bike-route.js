@@ -89,3 +89,40 @@ bikeRouter.get('/api/bikes', bearerAuth, function(req, res, next) {
   })
   .catch(next);
 });
+
+bikeRouter.put('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
+  debug('PUT /api/bike/:bikeID');
+  if(Object.keys(req.body).length === 0) return next(createError(400, 'bad request'));
+
+  Bike.findByIdAndUpdate(req.params.bikeID, req.body, {new: true})
+  .then( bike => {
+    res.json(bike);
+  })
+  .catch(next);
+});
+
+bikeRouter.put('/api/photo/bike/:id', bearerAuth, upload.single('image'),  jsonParser, function(req, res, next){
+  debug('PUT: /api/photo/bike/:id');
+  if(!req.file) return next(createError(400, 'photo required'));
+  let ext = path.extname(req.file.originalname);
+
+  let params = {
+    ACL: 'public-read',
+    Bucket: process.env.AWS_BUCKET,
+    Key: `${req.file.filename}${ext}`,
+    Body: fs.createReadStream(req.file.path)
+  };
+  s3methods.uploadObjectProm(params)
+  .then( s3data => {
+    del([`${dataDir}/*`]);
+    req.body.photoKey = s3data.Key;
+    req.body.photoURI = s3data.Location;
+    Bike.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    .then( bike => {
+      res.json(bike);
+    });
+  })
+  .catch(next);
+});
+
+//TODO tests for both put routes
