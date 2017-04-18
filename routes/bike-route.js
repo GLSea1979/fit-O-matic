@@ -26,7 +26,6 @@ bikeRouter.post('/api/mfr/:mfrID/bike', bearerAuth, upload.single('image'), json
   if(!req.body.category) return next(createError(400, 'Need a category'));
   if(!req.file) return next(createError(400, 'Need a photo'));
   if(!req.file.path) return next(createError(500, 'file not saved'));
-
   let ext = path.extname(req.file.originalname);
 
   let params = {
@@ -44,6 +43,7 @@ bikeRouter.post('/api/mfr/:mfrID/bike', bearerAuth, upload.single('image'), json
     .then( mfr => {
       if(!mfr) return next(createError(400, 'Mfr not found'));
       req.body.mfrID = mfr._id;
+      debug('got here', req.body);
       return Bike(req.body).save()
       .then( bike => {
         res.json(bike);
