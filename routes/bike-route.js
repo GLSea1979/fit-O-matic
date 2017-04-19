@@ -66,6 +66,18 @@ bikeRouter.get('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
   .catch(next);
 });
 
+bikeRouter.get('/api/bikes/all', bearerAuth, function(req, res, next) {
+  debug('GET /api/bikes');
+
+  Bike.find()
+  .then( bikes => {
+    if(!bikes[0]) return res.sendStatus(204);
+    res.json(bikes);
+  })
+  .catch(next);
+});
+
+
 bikeRouter.get('/api/bikes/:mfrID', bearerAuth, function(req, res, next) {
   debug('GET /api/bikes/:mfrID');
 
@@ -79,16 +91,7 @@ bikeRouter.get('/api/bikes/:mfrID', bearerAuth, function(req, res, next) {
 //TODO Write some tests
 
 
-bikeRouter.get('/api/bikes', bearerAuth, function(req, res, next) {
-  debug('GET /api/bikes');
 
-  Bike.find()
-  .then( bikes => {
-    if(!bikes[0]) return res.sendStatus(204);
-    res.json(bikes);
-  })
-  .catch(next);
-});
 
 bikeRouter.put('/api/bike/:bikeID', bearerAuth, jsonParser, function(req, res, next) {
   debug('PUT /api/bike/:bikeID');
