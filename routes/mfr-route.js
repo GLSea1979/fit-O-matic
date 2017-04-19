@@ -25,7 +25,6 @@ mfrRouter.post('/api/mfr', bearerAuth, jsonParser, function(req, res, next){
 
 mfrRouter.get('/api/mfr/:id', bearerAuth, function(req, res, next){
   debug('GET: /api/mfr/:id');
-  if(!req.params.id) return next(createError(400, 'Mfr Id Required'));
 
   Mfr.findById(req.params.id)
   .then( mfr => {
@@ -34,10 +33,21 @@ mfrRouter.get('/api/mfr/:id', bearerAuth, function(req, res, next){
   })
   .catch(next);
 });
+mfrRouter.get('/api/mfrs', bearerAuth, function(req, res, next){
+  debug('GET: /api/mfrs');
+
+  Mfr.find()
+  .then( mfrs => {
+    if(!mfrs[0]) res.sendStatus(204);
+    debug(mfrs);
+    res.json(mfrs);
+  })
+  .catch(next);
+});
+
 
 mfrRouter.put('/api/mfr/:id', bearerAuth, jsonParser, function(req, res, next){
   debug('PUT: /api/mfr/:id');
-  if(!req.params.id) return next(createError(400, 'Mfr Id required'));
 
   Mfr.findByIdAndUpdate(req.params.id, req.body, {new:true})
   .then( mfr => {
@@ -49,7 +59,6 @@ mfrRouter.put('/api/mfr/:id', bearerAuth, jsonParser, function(req, res, next){
 
 mfrRouter.delete('/api/mfr/:id', bearerAuth, function(req, res, next){
   debug('DELETE: /api/mfr/:id');
-  if(!req.params.id) return next(createError(400, 'Mfr Id required'));
 
   Mfr.findByIdAndRemove(req.params.id)
   .then( mfr => {
