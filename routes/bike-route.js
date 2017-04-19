@@ -90,10 +90,10 @@ bikeRouter.get('/api/bikes', bearerAuth, function(req, res, next) {
   .catch(next);
 });
 
-bikeRouter.put('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
+bikeRouter.put('/api/bike/:bikeID', bearerAuth, jsonParser, function(req, res, next) {
   debug('PUT /api/bike/:bikeID');
+  debug('------------------------------', req.body);
   if(Object.keys(req.body).length === 0) return next(createError(400, 'bad request'));
-
   Bike.findByIdAndUpdate(req.params.bikeID, req.body, {new: true})
   .then( bike => {
     res.json(bike);
