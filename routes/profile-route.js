@@ -65,6 +65,42 @@ profileRouter.put('/api/profile/:id', bearerAuth, jsonParser, function(req, res,
   .catch(next);
 });
 
+profileRouter.put('/api/favorites/profile/:id', bearerAuth, jsonParser, function(req, res, next){
+  debug('PUT: /api/favorites/profile/:id');
+  if(Object.keys(req.body).length === 0) return next(createError(400, 'bad request'));
+
+  Profile.findByIdAndUpdate(req.params.id, req.body, {new: true})
+  .populate('geoID')
+  .exec(function(err, docs) {
+    if(err) return next(err);
+    Profile.populate(docs, {
+      path: 'geoID.bikeID',
+      model: 'bike'
+    },
+    function(err, bikes) {
+      if(err) return next(err);
+      res.json(bikes);
+    });
+  });
+});
+
+profileRouter.get('/api/favorites/profile/:id', bearerAuth ,function(req, res, next){
+  debug('GET: /api/profile/:id');
+  Profile.findOne({userID:req.params.id})
+  .populate('geoID')
+  .exec(function(err, docs) {
+    if(err) return next(err);
+    Profile.populate(docs, {
+      path: 'geoID.bikeID',
+      model: 'bike'
+    },
+    function(err, bikes) {
+      if(err) return next(err);
+      res.json(bikes);
+    });
+  });
+});
+
 profileRouter.put('/api/profile/photo/:id', bearerAuth, upload.single('image'),  jsonParser, function(req, res, next){
   debug('PUT: /api/profile/photo/:id');
   if(!req.file) return next(createError(400, 'photo required'));
