@@ -347,6 +347,23 @@ describe('Profile Routes', function(){
       })
       .catch(done);
     });
+    describe('with a valid request', () => {
+      it('should return an updated profile', done => {
+        request.put(`${url}/api/favorites/profile/${this.tempProfile._id}`)
+        .send(sampleUpdatedProfile)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.body.name).to.equal(sampleUpdatedProfile.name);
+          expect(res.body.gender).to.equal(sampleUpdatedProfile.gender);
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+
 
     describe('without a file attached resulting in 400', () => {
       it('should return an error', done => {
