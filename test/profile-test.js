@@ -120,8 +120,52 @@ describe('Profile Routes', function(){
         });
       });
     });
-
     describe('with an invalid ID', () => {
+      before( done => {
+        new User(sampleUser)
+        .generatePasswordHash(sampleUser.password)
+        .then( user => user.save())
+        .then( user => {
+          this.tempUser = user;
+          return user.generateToken();
+        })
+        .then( token => {
+          this.tempToken = token;
+          done();
+        })
+        .catch(done);
+      });
+      before( done => {
+        sampleProfile.userID = this.tempUser._id;
+        new Profile(sampleProfile).save()
+        .then( profile => {
+          this.tempProfile = profile;
+          done();
+        })
+        .catch(done);
+      });
+      it('should return a 400 for CastError', done => {
+        request.get(`${url}/api/profile/:ohnooo`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        done();
+      });
+      });
+    });
+  });
+
+
+
+
+
+
+
+
+  describe('GET: api/favorites/profile/${userID}', function(){
+    describe('with a valid ID', () => {
       before( done => {
         new User(sampleUser)
         .generatePasswordHash(sampleUser.password)
@@ -146,18 +190,64 @@ describe('Profile Routes', function(){
         })
         .catch(done);
       });
+      it('should return a valid profile', done => {
+        request.get(`${url}/api/favorites/profile/${this.tempUser._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if(err) return done(err);
+          expect(res.status).to.equal(200);
+          // expect(res.body.userID).to.equal(this.tempUser._id.toString());
+          done();
+        });
+      });
+    });
+    describe('with an invalid ID', () => {
+      before( done => {
+        new User(sampleUser)
+        .generatePasswordHash(sampleUser.password)
+        .then( user => user.save())
+        .then( user => {
+          this.tempUser = user;
+          return user.generateToken();
+        })
+        .then( token => {
+          this.tempToken = token;
+          done();
+        })
+        .catch(done);
+      });
+      before( done => {
+        sampleProfile.userID = this.tempUser._id;
+        new Profile(sampleProfile).save()
+        .then( profile => {
+          this.tempProfile = profile;
+          done();
+        })
+        .catch(done);
+      });
       it('should return a 400 for CastError', done => {
-        request.get(`${url}/api/profile/:ohnooo`)
+        request.get(`${url}/api/favorites/profile/:ohnooooo`)
       .set({
         Authorization: `Bearer ${this.tempToken}`
       })
       .end((err, res) => {
+        console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^', res.status);
         expect(res.status).to.equal(400);
         done();
       });
       });
-    });//end GET
+    });
   });
+
+
+
+
+
+
+
+
 
   describe('PUT: /api/profile/:id', function(){
     before( done => {
@@ -226,7 +316,81 @@ describe('Profile Routes', function(){
         });
       });
     });
-  });//end PUT
+  });
+
+
+
+
+
+  describe('PUT: /api/favorites/profile/${profile._id}', function(){
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });//end before
+
+    before( done => {
+      sampleProfile.userID = this.tempUser._id;
+      new Profile(sampleProfile).save()
+      .then( profile => {
+        this.tempProfile = profile;
+        done();
+      })
+      .catch(done);
+    });
+
+    describe('without a file attached resulting in 400', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/favorites/profile/${this.tempProfile._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('without a body attached resulting in 400', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/favorites/profile/${this.tempProfile._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .type('text/plain')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+    describe('without an auth header resulting in 401', () => {
+      it('should return an error', done => {
+        request.put(`${url}/api/favorites/profile/${this.tempProfile._id}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          done();
+        });
+      });
+    });
+  });
+
+
+
+
+
+
+
+
   describe('PUT: /api/profile/photo/:id', function(){
     before( done => {
       new User(sampleUser)

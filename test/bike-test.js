@@ -288,7 +288,7 @@ describe('Bike Routes', function() {
     });
     describe('Request of all bikes with bikes in DB', () => {
       it('should return a list of all bikes', done  => {
-        request.get(`${url}/api/bikes`)
+        request.get(`${url}/api/all/bikes`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
@@ -300,11 +300,12 @@ describe('Bike Routes', function() {
         });
       });
     });
+    //TODO: fix this
     describe('With an empty bikes DB', () => {
       it('should return a 204', done => {
         Bike.remove({})
         .then( () => {
-          request.get(`${url}/api/bikes`)
+          request.get(`${url}/api/all/bikes`)
           .set({
             Authorization: `Bearer ${this.tempToken}`
           })

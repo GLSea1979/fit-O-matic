@@ -59,12 +59,26 @@ bikeRouter.get('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
   if(!req.params.bikeID) return next(createError(400, 'need a bike ID'));
 
   Bike.findById(req.params.bikeID)
+  .populate('mfrID')
   .then( bike => {
     if(!bike) return next(createError(400, 'bike not found'));
     res.json(bike);
   })
   .catch(next);
 });
+
+bikeRouter.get('/api/all/bikes', bearerAuth, function(req, res, next) {
+  debug('GET /api/all/bikes');
+
+  Bike.find()
+  .populate('mfrID')
+  .then( bikes => {
+    if(!bikes[0]) return res.sendStatus(204);
+    res.json(bikes);
+  })
+  .catch(next);
+});
+
 
 bikeRouter.get('/api/bikes/:mfrID', bearerAuth, function(req, res, next) {
   debug('GET /api/bikes/:mfrID');
@@ -79,16 +93,7 @@ bikeRouter.get('/api/bikes/:mfrID', bearerAuth, function(req, res, next) {
 //TODO Write some tests
 
 
-bikeRouter.get('/api/bikes', bearerAuth, function(req, res, next) {
-  debug('GET /api/bikes');
 
-  Bike.find()
-  .then( bikes => {
-    if(!bikes[0]) return res.sendStatus(204);
-    res.json(bikes);
-  })
-  .catch(next);
-});
 
 bikeRouter.put('/api/bike/:bikeID', bearerAuth, jsonParser, function(req, res, next) {
   debug('PUT /api/bike/:bikeID');
