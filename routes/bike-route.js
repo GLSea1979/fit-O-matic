@@ -67,8 +67,8 @@ bikeRouter.get('/api/bike/:bikeID', bearerAuth, function(req, res, next) {
   .catch(next);
 });
 
-bikeRouter.get('/api/bikes/all', bearerAuth, function(req, res, next) {
-  debug('GET /api/bikes');
+bikeRouter.get('/api/all/bikes', bearerAuth, function(req, res, next) {
+  debug('GET /api/all/bikes');
 
   Bike.find()
   .populate('mfrID')
