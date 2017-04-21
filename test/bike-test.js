@@ -254,7 +254,7 @@ describe('Bike Routes', function() {
       });
     });
   });
-  describe('GET api/bikes', () => {
+  describe.only('GET api/bikes', () => {
     before( done => {
       new User(sampleUser)
       .generatePasswordHash(sampleUser.password)
@@ -285,37 +285,6 @@ describe('Bike Routes', function() {
         done();
       })
       .catch(done);
-    });
-    describe('Request of all bikes with bikes in DB', () => {
-      it('should return a list of all bikes', done  => {
-        request.get(`${url}/api/bikes`)
-        .set({
-          Authorization: `Bearer ${this.tempToken}`
-        })
-        .end((err, res) => {
-          if(err) return done(err);
-          expect(res.status).to.equal(200);
-          expect(res.body[0].name).to.equal(sampleBike.name);
-          done();
-        });
-      });
-    });
-    describe('With an empty bikes DB', () => {
-      it('should return a 204', done => {
-        Bike.remove({})
-        .then( () => {
-          request.get(`${url}/api/bikes`)
-          .set({
-            Authorization: `Bearer ${this.tempToken}`
-          })
-          .end((err, res) => {
-            if(err) return done(err);
-            expect(res.status).to.equal(204);
-            expect(res.body.name).to.equal(undefined);
-            done();
-          });
-        });
-      });
     });
   });
 });
