@@ -319,4 +319,203 @@ describe('Bike Routes', function() {
       });
     });
   });
+  describe('GET api/bikes/:mfrID', () => {
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      new Mfr(sampleMfr).save()
+      .then( mfr => {
+        this.tempMfr = mfr;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      sampleBike.mfrID = this.tempMfr._id;
+      new Bike(sampleBike).save()
+      .then(bike => {
+        this.tempBike = bike;
+        done();
+      })
+      .catch(done);
+    });
+    describe('Request of all bikes from a mfr', () => {
+      it('should return a list of all bikes from mfr', done  => {
+        request.get(`${url}/api/bikes/${this.tempMfr._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if(err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(res.body[0].name).to.equal(sampleBike.name);
+          done();
+        });
+      });
+    });
+  });
+  describe('PUT: /api/bike/:bikeID', function() {
+    before( done => {
+      Promise.all([
+        Bike.remove({}),
+        Mfr.remove({}),
+        User.remove({})
+      ])
+      .then( () => done())
+      .catch(done);
+    });
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      new Mfr(sampleMfr).save()
+      .then( mfr => {
+        this.tempMfr = mfr;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      sampleBike.mfrID = this.tempMfr._id;
+      new Bike(sampleBike).save()
+      .then(bike => {
+        this.tempBike = bike;
+        done();
+      })
+      .catch(done);
+    });
+    // after( done => {
+    //   if(this.tempKey) {
+    //     let params = {
+    //       Bucket: process.env.AWS_BUCKET,
+    //       Key: this.tempKey
+    //     };
+    //     s3methods.deleteObjectProm(params)
+    //     .then( () => {
+    //       del([`${dataDir}/*`]);
+    //       done();
+    //     });
+    //   }
+    // });
+
+
+    describe('with a valid body', () => {
+      it('should return an updated bike', done => {
+        request.put(`${url}/api/bike/${this.tempBike._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        // .field('bikeName', this.tempBike.bikeName)
+        // .field('category', this.tempBike.category)
+        // .attach('image', `${__dirname}/data/test.jpg`)
+        .send({bikeName: this.tempBike.bikeName})
+        .end((err, res) => {
+          if(err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(res.body.bikeName).to.equal(sampleBike.bikeName);
+          this.tempKey = res.body.photoKey;
+          done();
+        });
+      });
+    });
+  });
+  describe('PUT: /api/photo/bike/:bikeID', function() {
+    before( done => {
+      Promise.all([
+        Bike.remove({}),
+        Mfr.remove({}),
+        User.remove({})
+      ])
+      .then( () => done())
+      .catch(done);
+    });
+    before( done => {
+      new User(sampleUser)
+      .generatePasswordHash(sampleUser.password)
+      .then( user => user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      new Mfr(sampleMfr).save()
+      .then( mfr => {
+        this.tempMfr = mfr;
+        done();
+      })
+      .catch(done);
+    });
+    before( done => {
+      sampleBike.mfrID = this.tempMfr._id;
+      new Bike(sampleBike).save()
+      .then(bike => {
+        this.tempBike = bike;
+        done();
+      })
+      .catch(done);
+    });
+    after( done => {
+      if(this.tempKey) {
+        let params = {
+          Bucket: process.env.AWS_BUCKET,
+          Key: this.tempKey
+        };
+        s3methods.deleteObjectProm(params)
+        .then( () => {
+          del([`${dataDir}/*`]);
+          done();
+        });
+      }
+    });
+
+
+    describe('with a valid body', () => {
+      it('should return an updated bike with photo', done => {
+        request.put(`${url}/api/photo/bike/${this.tempBike._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .field('bikeName', this.tempBike.bikeName)
+        .field('category', this.tempBike.category)
+        .attach('image', `${__dirname}/data/test.jpg`)
+        //.send({bikeName: this.tempBike.bikeName})
+        .end((err, res) => {
+          if(err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(res.body.bikeName).to.equal(sampleBike.bikeName);
+          this.tempKey = res.body.photoKey;
+          done();
+        });
+      });
+    });
+  });
 });

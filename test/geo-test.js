@@ -146,6 +146,24 @@ describe('Bike Geometry Routes', function() {
         });
       });
     });  });
+  describe('POST /api/geometry', () => {
+
+    describe('with a body', () => {
+      it('should return 200 with a new bike geometry', done => {
+        request.post(`${url}/api/geo`)
+        .send(sampleBikeGeo)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+
+  });
   describe('GET: /api/geo/:geoID', function() {
 
     before( done => {

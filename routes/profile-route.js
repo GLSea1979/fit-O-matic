@@ -27,9 +27,7 @@ profileRouter.post('/api/profile/:userid', bearerAuth, jsonParser,  function(req
   .then( profile => {
     return res.json(profile);
   })
-  .catch(err => {
-    next();
-  });
+  .catch(next);
 });//end POST
 
 profileRouter.get('/api/profile/:id/bikes', bearerAuth ,function(req, res, next){
