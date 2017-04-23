@@ -4,10 +4,18 @@ const debug = require('debug')('fit-O-matic:basic-route');
 
 const basicRouter = module.exports = Router();
 
-basicRouter.get('/', (req, res, next) => {
-  debug('GET /');
+// basicRouter.get('/', (req, res, next) => {
+//   debug('GET /');
+//
+//   res.send('Your app is working')
+//   .end();
+//   next();
+// });
 
-  res.send('Your app is working')
-  .end();
+basicRouter.get('/', (req, res, next) => {
+  debug('GET: /');
+
+  res.send('./public/index.html')
+  .end()
   next();
 });
