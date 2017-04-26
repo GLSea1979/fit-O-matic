@@ -41,7 +41,6 @@ bikeRouter.post('/api/mfr/:mfrID/bike', bearerAuth, upload.single('image'), json
     req.body.photoURI = s3data.Location;
     Mfr.findById(req.params.mfrID)
     .then( mfr => {
-      if(!mfr) return next(createError(400, 'Mfr not found'));
       req.body.mfrID = mfr._id;
       debug('got here', req.body);
       return Bike(req.body).save()

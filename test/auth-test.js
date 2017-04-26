@@ -229,6 +229,7 @@ describe('Auth Routes', function(){
         .auth('test username', 'wrong password')
         .end((err) => {
           expect(err.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
           done();
         });
       });
