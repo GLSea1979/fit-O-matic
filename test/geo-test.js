@@ -52,9 +52,9 @@ const sampleMeasure =  {
 };
 
 const sampleMeasure2 = {
-  height: 167.42,
-  inseam: 76.10,
-  result: bikeAlgorithm.basicfit(167.42, 76.10)
+  height: 168.00,
+  inseam: 76.00,
+  result: bikeAlgorithm.basicfit(168.00, 76.00)
 };
 
 const sampleMeasure3 = {
@@ -288,6 +288,10 @@ describe('Bike Geometry Routes', function() {
       .catch(done);
     });
 
+
+
+
+
     it('should return a bike geometry object', done => {
 
       request.get(`${url}/api/geo/?height=${sampleMeasure.height}&inseam=${sampleMeasure.inseam}`)
@@ -351,6 +355,19 @@ describe('Bike Geometry Routes', function() {
       .end((err, res) => {
         expect(err.message).to.equal('Bad Request');
         expect(res.status).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return all the bike geometry objects', done => {
+      request.get(`${url}/api/geos`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        debug(res.body, 'goes!!!!!!!');
+        expect(res.status).to.equal(200);
         done();
       });
     });
