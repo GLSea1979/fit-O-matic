@@ -1,3 +1,67 @@
 'use strict';
 
-//not really sure if we need the vendor to have its own schema or if it just needs to be a property/flag within the 'user' model.
+const mongoose = require('mongoose');
+const Schema = mongoose.schema;
+
+const vendorSchema = Schema({
+  mfrID: { type: Schema.Types.ObjectId, ref: 'mfr'}
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  admin: { type: Boolean, required: true},
+  findHash: { type: String, unique: true }
+})
+
+vendorSchema.methods.generatePasswordHash = function(password) {
+  debug('generatePasswordHash');
+
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(password, 10, (err, hash) => {
+      if (err) return reject(err);
+      this.password = hash;
+      resolve(this);
+    });
+  });
+};
+
+userSchema.methods.comparePasswordHash = function(password) {
+  debug('comparePasswordHash');
+
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, this.password, (err, valid) => {
+      if (err) return reject(err);
+      if (!valid) return reject(createError(401, 'wrong password'));
+      resolve(this);
+    });
+  });
+};
+
+vendorSchema.methods.generateFindHash = function() {
+  debug('generateFindHash');
+
+  return new Promise((resolve, reject) => {
+
+    _generateFindHash.call(this);
+
+    function _generateFindHash() {
+      this.findHash = crypto.randomBytes(32).toString('hex');
+      this.save()
+      .then(() => resolve(this.findHash))
+      .catch( err => {
+        return reject(err);
+      });
+    }
+  });
+};
+
+vendorSchema.methods.generateToken = function() {
+  debug('generateToken');
+
+  return new Promise((resolve, reject) => {
+    this.generateFindHash()
+    .then(findHash => resolve(jwt.sign({ token: findHash }, process.env.APP_SECRET)))
+    .catch( err => reject(err));
+  });
+};
+
+module.exports = mongoose.model('vendor', vendorSchema);
