@@ -15,7 +15,7 @@ const authRouter = module.exports = Router();
 authRouter.post('/api/signup', jsonParser, function(req, res, next){
   debug('POST /api/signup');
   if (!req.body.username) return next(createError(400, 'need username'));
-  if (!req.body.admin) return next(createError(400, 'need admin'));
+  // if (!req.body.admin) return next(createError(400, 'need admin'));
   if (!req.body.email) return next(createError(400, 'need an email'));
   if (!req.body.password) return next(createError(400, 'need a password'));
 
