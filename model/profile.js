@@ -12,6 +12,7 @@ const profileSchema = Schema({
   inseam: {type: Number},
   torso: {type: Number},
   height: {type: Number},
+  metric: {type: Boolean, default: false},
   userID: {type: Schema.Types.ObjectId, required: true},
   createdOn: {type: Date, default: Date.now},
   geoID: [{ type: Schema.Types.ObjectId, ref: 'geometry' }]
