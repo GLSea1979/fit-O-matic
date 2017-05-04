@@ -96,20 +96,6 @@ describe('Auth Routes', function(){
             done();
           });
         });
-        it('should return a 400 error, no admin', done => {
-          let brokenUser = {
-            username: 'test username',
-            email: 'test email',
-            password: 'testpassword'
-          };
-          request.post(`${url}/api/signup`)
-          .send(brokenUser)
-          .set('Content-Type', 'application/json')
-          .end((err, res) => {
-            expect(res.status).to.equal(400);
-            done();
-          });
-        });
       });
     });
   });

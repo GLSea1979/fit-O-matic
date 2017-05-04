@@ -50,6 +50,16 @@ profileRouter.get('/api/profile/:id', bearerAuth ,function(req, res, next){
   .catch(next);
 });
 
+//TODO: TEST!
+profileRouter.get('/api/all/profile', bearerAuth ,function(req, res, next){
+  debug('GET: /api/all/profile/');
+  Profile.find({})
+  .then( profiles => {
+    res.json(profiles);
+  })
+  .catch(next);
+});
+
 profileRouter.put('/api/profile/:id', bearerAuth, jsonParser, function(req, res, next){
   debug('PUT: /api/profile/:id');
   if(Object.keys(req.body).length === 0) return next(createError(400, 'bad request'));

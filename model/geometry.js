@@ -16,6 +16,8 @@ const GeoSchema =  Schema({
   seatTubeAngle: {type: Number},
   stack: {type: Number},
   reach: {type: Number},
+  // TODO: plug this into routes etc
+  mfrID: {type: Schema.Types.ObjectId, ref: 'mfr'}
 });
 
 module.exports = mongoose.model('geometry', GeoSchema);
